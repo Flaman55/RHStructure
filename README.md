@@ -3,6 +3,10 @@
 Primes in short intervals from the Lean proof of the Riemann Hypothesis, and a structural reading
 of that proof.
 
+Paper: *Why the Lean proof of the Riemann Hypothesis works: Stepanov's balance in rings and arcs,
+and where the exponent 1/2 is set*, Zenodo, https://doi.org/10.5281/zenodo.24572321 (source in
+`paper/`).
+
 The RH-conditional versions of the short-interval theorems are registered on Palomar as
 `PALOMAR-2026-11-26-000056` (version 1), from https://github.com/Flaman55/RHShortIntervals at
 commit `f9269d3`.

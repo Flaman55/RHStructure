@@ -13,11 +13,17 @@ abstract: >-
   on Palomar as PALOMAR-2026-11-26-000056. The proof of the Riemann Hypothesis is not a result of
   this work.
 type: software
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.24572321
+    description: Paper (Zenodo preprint)
 authors:
   - family-names: Flamandzki
     given-names: Artur
     email: flamandzki.artur@gmail.com
 version: 0.2.0
+doi: 10.5281/zenodo.24572321
+date-released: 2026-11-26
 license: Apache-2.0
 repository-code: "https://github.com/Flaman55/RHStructure"
 keywords:
