@@ -3,6 +3,7 @@ import Structural.Lever
 import Structural.Certificate
 import New.Endgame.ShortAndEnough
 import New.Filling.FillingTheorem
+import New.Selmer.FitTwistsExist
 
 /-!
 # The lever as Stepanov's inequality
@@ -74,5 +75,11 @@ alias few_translates := _root_.exists_few_translates
 /-- The spread hypothesis of the covering, from the second moment of the Poincaré series
 (grh-compact's `Data.ramifiedColumns_fill_rows`). -/
 alias columns_fill_rows := _root_.Data.ramifiedColumns_fill_rows
+
+/-- The price of divisibility (grh-compact's `exists_isFitFamily`): for each prime `ℓ` and each
+`ι : ℂ ≃ ℚ̄_ℓ` a twist whose first `m` powers have few congruences, so that the denominators of the
+projections to the lifts, summed over the primes, stay within `B₀` per rank and dimension. In the
+Chebyshev–Erdős certificate the same condition, multiplicity one above `√(2n)`, is free. -/
+alias fit_twists := _root_.exists_isFitFamily
 
 end Structural

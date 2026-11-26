@@ -163,6 +163,25 @@ v_p(N!)=\sum_{1\le i<b}\operatorname{arc}(N,p^i).
 This is Legendre's formula (Mathlib's \lean{padicValNat_factorial}) read as arcs: the divisibility
 of $N!$ by $p$ is the number of full turns of the rings $p,p^2,p^3,\dots$ up to $N$.
 
+\paragraph{Dictionary.} The vocabulary is the author's; each term is a standard object.
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+this note & standard\\
+\midrule
+ring $p^i$ & the modulus $p^i$\\
+marker of $N$ on $p$ & $N\bmod p$\\
+arc of $N$ on $p$ & $\lfloor N/p\rfloor$\\
+turns of $\nu$ over $A$ & $A/\nu$\\
+arcs of $N$ on $p,p^2,\dots$ & Legendre's formula for $v_p(N!)$\\
+excess turns of $\nu$ over those of $z$ & $(A/\nu-A/z)^+$\\
+\bottomrule
+\end{tabular}
+\end{center}
+The vocabulary is used where it carries a proved statement: Legendre's formula, the remainder
+(Section~\ref{sec:remainder}), the central binomial coefficient (Section~\ref{sec:certificate})
+and the level (Section~\ref{sec:lever}). Elsewhere the standard names are used.
+
 \section{The remainder is a sum of excess turns}\label{sec:remainder}
 
 grh-compact fixes a prime $d\equiv7\bmod 8$ and a modulus $M$, and weighs the ring $\nu$ by
@@ -345,8 +364,8 @@ $\dim\sum_{s\in t}B_s(V)\ge(1-4\eta)\dim W$.
 Each new translate keeps, modulo what is already spanned, about half of what is still missing; the
 missing dimension halves at each round, and $\log(1+b^2)$ rounds leave a share $4/b^2$ (Theorem~B,
 \lean{Data.enough_forms}, with $\eta=b^{-2}$). This is the dimension count of Stepanov's method in
-the form of a greedy covering; in arcs it is the count of rings, a logarithm, and it costs only
-the factor $\log(1+b^2)$ that the budget absorbs.
+the form of a greedy covering, and it costs only the factor $\log(1+b^2)$ that the budget
+absorbs.
 
 \paragraph{The spread is analytic.}
 \begin{theorem}[\lean{Structural.columns_fill_rows}, grh-compact's
@@ -411,13 +430,51 @@ Selmer bounds keep the denominators of the twisted lifts small). Over $\mathbb Q
 of $\binom{2n}{n}$ is free, by arcs; over the CM field it costs the Selmer bounds. That is the
 difference between Chebyshev's bounds and the critical line.
 
-\paragraph{The price of divisibility: from $2/3$ to $1/2$.} In Stepanov's balance this is the
-second charge. Alpöge records that, judging by the cost of each lift alone, the method would stop
-at $2/3$; the division of the auxiliary object and the twists that keep its denominators small are
-what bring it to $1/2$ \cite{Alpoge2026}. The table agrees: the Selmer step is the heaviest step
-that no other step needs. In our reading, over $\mathbb F_q$ the corresponding price is paid by the Frobenius,
-which makes $x\mapsto x^q$ a polynomial of degree $q$ and the multiplicity cheap; over the integers
-there is no Frobenius, and the twists stand in its place.
+\section{The price of divisibility: from $2/3$ to $1/2$}\label{sec:selmer}
+
+\paragraph{What the sources say.} Alpöge's timeline records a precise computation of the cost of
+each lift, showing that the method would stop at $2/3$ a priori, then the attempt to kill the
+obstruction by twisting and the need for a ``division'' \cite[item 14]{Alpoge2026}; for the
+classes in $H^1$ that twisting could not kill, a weakening of Vandiver's conjecture
+\cite[item 17]{Alpoge2026}. The remark does not give the computation of $2/3$, and neither does
+grh-compact, which proves only the final bound. We do not reconstruct the $2/3$ here.
+
+\paragraph{Where the step sits.} The spine (Section~\ref{sec:spine}) bounds one covolume from
+both sides,
+\[
+h_{\mathrm{main}}\;\le\;\frac{V+2\delta}{\dim\text{rows}}\;\le\;h_{\mathrm{main}}-m\cdot\mathrm{rem}.
+\]
+The right inequality is the auxiliary object of Section~\ref{sec:auxiliary}. The left one is the
+lower bound: each of the $m$ lifts gains $\dim\text{rows}\cdot k\,\mathsf U$ on the trivial twist
+(\lean{heightLe_liftVolume_ratio}), the volume of the chain is the product of the lift volumes,
+and the product formula closes the argument. The lower bound is a statement about divisibility: the
+lifts must not be divisible by more than expected. A congruence between a lift and a form that is
+not a lift adds an $\ell$-adic denominator to the projection onto the lifts, and such denominators
+are Selmer classes (Ribet's method). Uncontrolled, they eat the gain of each lift.
+
+\begin{theorem}[\lean{Structural.fit_twists}, grh-compact's \lean{exists_isFitFamily}]
+For each prime $\ell$ and each identification $\iota\colon\mathbb C\cong\overline{\mathbb Q}_\ell$
+there is a twist $\vartheta_\iota$, of level prime to $\ell$, such that the denominators of the
+projections onto the lifts of $\vartheta_\iota,\vartheta_\iota^2,\dots,\vartheta_\iota^m$, summed
+over any finite set of primes with weights $\log\ell$, are at most $B_0=fa(\log b)^3/(mk)$ per
+rank and dimension, and the ratios of Hecke values have height at most $x^{999}$.
+\end{theorem}
+
+\paragraph{Comparison with the certificate.} A denominator at $\ell$ is divisibility of the chain
+by $\ell$ beyond the count that the lifts predict. The theorem says that, after twisting, these
+excess divisibilities at all primes together weigh at most $B_0$ per rank and dimension. This is
+the counterpart of multiplicity one in the Chebyshev--Erdős
+certificate (\lean{Structural.erdos_multiplicity_one}): there the divisibility of
+$\binom{2n}{n}$ beyond the expected count is excluded for free, by carries in base $p$; here it is
+excluded only at a cost, by choosing the twist one prime at a time, so that the Selmer groups
+become short (New/Selmer/TwistTheorem) and the denominators follow (New/Selmer/DenominatorBound).
+The even classes, where Vandiver's conjecture lives, cost nothing there, which matches item 17 of
+the timeline. The table of Section~\ref{sec:weights} agrees on the weight: this is the heaviest step that no other step
+needs.
+
+In our reading, over $\mathbb F_q$ the corresponding price is paid by the Frobenius, which makes
+$x\mapsto x^q$ a polynomial of degree $q$ and the multiplicity cheap; over the integers there is no
+Frobenius, and the twists stand in its place. This is a comparison, not a theorem.
 
 \section{An application: primes in short intervals}\label{sec:short}
 
@@ -497,21 +554,39 @@ the line to which the contour can be moved, that is, as the output of grh-compac
 Section~\ref{sec:lever} is where the proof of grh-compact sets that line; the application uses it
 and adds nothing to it.
 
+\section{Open questions}\label{sec:open}
+
+The mechanism of Sections~\ref{sec:stepanov}--\ref{sec:selmer} rests on two inputs that are not
+structural, and it leaves one question about its edge.
+
+\begin{enumerate}
+\item \emph{Why does the cost of the chain grow quadratically without the twists?} The lever
+gives, for a loss at the level growing like $m^\alpha$, at most about $x^{1/(\alpha+1)}$ lifts and
+the zero-free half-plane $\operatorname{Re}s>1-1/(\alpha+1)$ (\lean{Structural.lever_power};
+$\alpha=1$ gives $1/2$, \lean{Structural.lever_one_half}; $\alpha=2$ gives $2/3$,
+\lean{Structural.lever_two_thirds}). Alpöge's ``$2/3$ a priori'' \cite[item 14]{Alpoge2026} would
+follow from a loss quadratic in $m$ for the untwisted chain, for instance from congruences between
+pairs of the powers $\vartheta^j$, or from Selmer lengths growing with $j$. We do not know which, and
+we have not proved either.
+\item \emph{What in the second moment of the Poincaré series gives the half?} The covering of
+Section~\ref{sec:auxiliary} needs that some translate keeps about half of what any subspace misses.
+This comes from Petersson's formula, Kloosterman sums and a sieve (New/Filling/Moments); its
+structural meaning, if any, is open.
+\item \emph{Is $1/2$ the edge of this method or of every method?} A choice of level that avoids
+the double charge would move the edge of Section~\ref{sec:lever}; we do not know whether one exists.
+\end{enumerate}
+
 \section{What this note does not claim}
 
 \begin{itemize}
 \item It does not prove the Riemann Hypothesis; the proof is Alpöge's (with Claude), in the
 rewriting of Sernau and colleagues (with Claude).
-\item It shows where $1/2$ is set in this proof. It does not show that every proof must meet the
-same edge; a different choice of level might avoid the double charge.
 \item The heuristic that the Riemann Hypothesis is a square-root law is old (cancellation as in a
 random walk). What is stated here is the mechanism that produces the square root in this proof.
 \item The weights of Section~\ref{sec:weights} depend on how grh-compact factors its argument.
-\item Two inputs are located and weighed here but not derived in rings and arcs: the second
-moment of the Poincaré series that gives the spread of the auxiliary object
-(Section~\ref{sec:auxiliary}), and the mechanism by which the Selmer twists keep the denominators
-small (the step from $2/3$ to $1/2$). The comparison with the Frobenius over $\mathbb F_q$ is a reading, not a
-theorem.
+\item The Galois-cohomological proof that the twists keep the denominators small
+(Section~\ref{sec:selmer}) is located and weighed here, not explained. The comparison with the
+Frobenius over $\mathbb F_q$ is a reading, not a theorem.
 \end{itemize}
 
 \appendix
@@ -520,7 +595,7 @@ theorem.
 grh-compact at the commit above builds in 36 minutes on the author's PC (Lean v4.35.0) and its five
 theorems print only \lean{propext}, \lean{Classical.choice}, \lean{Quot.sound}. The files
 \texttt{Structural/Arcs.lean}, \texttt{Certificate.lean}, \texttt{Lever.lean},
-\texttt{Spine.lean}, \texttt{Stepanov.lean} are added as a library on top of it without changing
+\texttt{Spine.lean}, \texttt{Stepanov.lean}, \texttt{Exponent.lean} are added as a library on top of it without changing
 it; all their theorems print the same three axioms. After \texttt{lake build}, the command
 \texttt{lake env lean scripts/Axioms.lean} prints the axioms of every theorem named in this note. The repository is a standalone Lake project that requires
 grh-compact at the commit above; \texttt{PNTPort/} holds the ported files of PrimeNumberTheoremAnd

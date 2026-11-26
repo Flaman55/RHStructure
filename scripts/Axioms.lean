@@ -6,6 +6,7 @@ import Structural.Arcs
 import Structural.Certificate
 import Structural.Spine
 import Structural.Stepanov
+import Structural.Exponent
 import Applications.RHLogDeriv
 import Applications.RHMellin
 import Applications.RHPsi
@@ -19,6 +20,10 @@ import Applications.StructuralWindow
 #print axioms Structural.auxiliary_size
 #print axioms Structural.few_translates
 #print axioms Structural.columns_fill_rows
+#print axioms Structural.fit_twists
+#print axioms Structural.lever_power
+#print axioms Structural.lever_one_half
+#print axioms Structural.lever_two_thirds
 #print axioms Structural.level_arcs
 #print axioms Structural.level_charge_per_arc
 #print axioms Structural.padicValNat_factorial_eq_sum_arcs
