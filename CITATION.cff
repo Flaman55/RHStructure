@@ -1,21 +1,23 @@
 cff-version: 1.2.0
 message: "If you use this work, please cite it together with the two sources of the proof it reads (see references)."
-title: "RHStructure: primes in short intervals from the Lean proof of the Riemann Hypothesis"
+title: "Why the Lean proof of the Riemann Hypothesis works: Stepanov's balance in rings and arcs, and where the exponent 1/2 is set"
 abstract: >-
-  A Lean 4 deduction, from Mathlib's RiemannHypothesis, of psi(x) = x + O(x^(1/2+delta)) and of a
-  prime in (x, x + x^(1/2+epsilon)] for large x (von Koch 1901), holding without hypotheses with
-  RH supplied by grh-compact. Also a structural reading, in the language of rings and arcs, of the Lean 4 proof of the Riemann
-  Hypothesis and of GRH for Dirichlet L-functions by Levent Alpoge (with Claude), in the
-  compact rewriting grh-compact by Luke Sernau and colleagues at Anthropic (with Claude).
-  The Lean files under Structural/ build on the unchanged grh-compact and state the chain of
-  the proof in ring and arc terms, including the lever that fixes the exponent 1/2. The proof
-  of the Riemann Hypothesis is not a result of this work.
+  A structural reading of the Lean 4 proof of the Riemann Hypothesis and of GRH for Dirichlet
+  L-functions by Levent Alpoge (with Claude), in the compact rewriting grh-compact by Luke Sernau
+  and colleagues at Anthropic (with Claude). The proof is read as Stepanov's balance over the
+  integers: a chain of m theta lifts wins multiplicity m, the level prime N is charged twice, and
+  the square law m^2 <~ x sets the exponent 1/2. The Lean files under Structural/ build on the
+  unchanged grh-compact and state these steps as theorems. As an application, Lean deductions
+  from Mathlib's RiemannHypothesis of psi(x) = x + O(x^(1/2+delta)) and of a prime in
+  (x, x + x^(1/2+epsilon)] for large x (von Koch 1901); the conditional versions are registered
+  on Palomar as PALOMAR-2026-11-26-000056. The proof of the Riemann Hypothesis is not a result of
+  this work.
 type: software
 authors:
   - family-names: Flamandzki
     given-names: Artur
     email: flamandzki.artur@gmail.com
-version: 0.1.0
+version: 0.2.0
 license: Apache-2.0
 repository-code: "https://github.com/Flaman55/RHStructure"
 keywords:
@@ -23,6 +25,8 @@ keywords:
   - Mathlib
   - Riemann Hypothesis
   - formal verification
+  - Stepanov's method
+  - primes in short intervals
 references:
   - type: software
     title: "grh-lean (compact edition)"
@@ -33,7 +37,7 @@ references:
     commit: "72fead102f663d5c7a407964a13dc0cf9d977207"
     license: Apache-2.0
   - type: report
-    title: "Lean proof of the Riemann Hypothesis and GRH for Dirichlet L-functions"
+    title: "Untitled remark on the Lean proof, with a timeline dated 6 October to 16 November 2026"
     authors:
       - family-names: Alpoge
         given-names: Levent

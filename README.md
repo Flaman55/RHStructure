@@ -3,6 +3,10 @@
 Primes in short intervals from the Lean proof of the Riemann Hypothesis, and a structural reading
 of that proof.
 
+The RH-conditional versions of the short-interval theorems are registered on Palomar as
+`PALOMAR-2026-11-26-000056` (version 1), from https://github.com/Flaman55/RHShortIntervals at
+commit `f9269d3`.
+
 The Riemann Hypothesis has a Lean 4 proof by Levent Alpöge, with Claude
 (<https://alpo.ge/remark.pdf>), rewritten as grh-compact by Luke Sernau and colleagues at
 Anthropic, with Claude (<https://github.com/lsernau/grh-lean>, folder `grh-compact`, commit

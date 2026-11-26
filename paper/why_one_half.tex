@@ -32,11 +32,12 @@ The Riemann Hypothesis, and the Generalized Riemann Hypothesis for Dirichlet $L$
 a proof in Lean~4 by Levent Alpöge, written with Claude, and a shorter rewriting of that proof,
 \emph{grh-compact}, by Luke Sernau and colleagues at Anthropic, also with Claude. This note does
 not give a new proof. It explains why that proof succeeds, in the language of rings, markers and
-arcs, and it locates the place where the exponent $1/2$ of the critical line is set. The proof is,
+arcs where that language carries proved statements and in the standard names elsewhere, and it
+locates the place where the exponent $1/2$ of the critical line is set. The proof is,
 in Alpöge's words, a descendant of Stepanov's method for curves over finite fields, where an
 auxiliary function vanishing with multiplicity $E$ at $q$ points has degree at least $Eq$ and the
 balance $E\approx\sqrt q$ gives the error $\sqrt q$. Over the integers multiplicity is missing; in
-the proof each theta lift of a chain supplies one unit of it. We show, with Lean theorems, that the
+the proof a chain of $m$ theta lifts, each mimicking multiplicity, wins multiplicity $m$. We show, with Lean theorems, that the
 place where the proof sets $1/2$ is this balance in the form $m\approx\sqrt x$. The prime-sum
 remainder whose one-sided bound gives the zero-free half-plane is a weighted sum of excess turns of
 rings. The argument is a certificate of size against divisibility, the same kind as the central
@@ -52,7 +53,9 @@ As an application, the note deduces in Lean, from Mathlib's \lean{RiemannHypothe
 classical consequences $|\psi(x)-x|\le C x^{1/2+\delta}$ and, for every $\varepsilon>0$ and all
 large $x$, a prime in $(x,x+x^{1/2+\varepsilon}]$ (von Koch; Cramér). With the Riemann Hypothesis
 supplied by grh-compact, both statements hold in Lean without hypotheses
-(\lean{Submission.chebyshev_psi_error}, \lean{Submission.exists_prime_in_short_interval}).
+(\lean{Submission.chebyshev_psi_error}, \lean{Submission.exists_prime_in_short_interval}); the
+conditional versions are registered on Palomar as PALOMAR-2026-11-26-000056. The note ends with
+three open questions, among them the cost that would stop the method at $2/3$ without the twists.
 \end{abstract}
 
 \section{Sources and what this note is}
@@ -127,9 +130,9 @@ $Eq$.
 
 \paragraph{Over the integers.} Alpöge describes his proof as a descendant of Stepanov's argument,
 and names its difficulty: multiplicity is hard to find over the integers, it would correspond to
-differentiating whole numbers \cite{Alpoge2026}. His answer is to chain theta lifts, each lift
-supplying one unit of multiplicity, with a chain of length about $\sqrt X$ for a sum of length
-$X$. In grh-compact the chain has $m\in[\sqrt x,2\sqrt x]$ lifts.
+differentiating whole numbers \cite{Alpoge2026}. His answer is to chain theta lifts, each mimicking
+multiplicity, so that $m$ lifts win multiplicity $m$, with $m$ about $\sqrt X$ for a sum of
+length $X$. In grh-compact the chain has $m\in[\sqrt x,2\sqrt x]$ lifts.
 
 \paragraph{Multiplicity one.} The certificate of Chebyshev and Erdős for Bertrand's postulate has
 the same shape, size against divisibility of $\binom{2n}{n}$, with multiplicity at most one above
@@ -315,7 +318,7 @@ language of Section~\ref{sec:rings}. In the certificate of Chebyshev and Erd\H{o
 $\sqrt{N}$ has an arc only on its first ring, so it enters the central binomial coefficient at most
 once:
 
-\begin{theorem}[\lean{Structural.arc_eq_zero_of_lt_sq}, \lean{Structural.centralBinom_factorization_le_one}]
+\begin{theorem}[\lean{Structural.arc_eq_zero_of_lt_sq},\\ \lean{Structural.centralBinom_factorization_le_one}]
 If $N<p^2$ and $i\ge2$, then $\mathrm{arc}(N,p^i)=0$. If $2n<p^2$, then $v_p\binom{2n}{n}\le1$.
 \end{theorem}
 
@@ -601,7 +604,7 @@ it; all their theorems print the same three axioms. After \texttt{lake build}, t
 grh-compact at the commit above; \texttt{PNTPort/} holds the ported files of PrimeNumberTheoremAnd
 and \texttt{Applications/} the four steps of Section~\ref{sec:short}, whose theorems print the
 same three axioms. The experiment of Section~\ref{sec:lever} is the script
-\texttt{patch\_theta\_v3.py} applied to a copy, with $\theta=2/5$ and $3/5$.
+\texttt{scripts/lever/patch\_theta\_v3.py} applied to a copy, with $\theta=2/5$ and $3/5$. The weights of Section~\ref{sec:weights} come from \texttt{scripts/weights} (a dependency walk of the built grh-compact and a closure count).
 
 \paragraph{Writing.} The Lean files and this text were written with Claude (Anthropic) under the
 author's direction; the author ran every build.
@@ -617,7 +620,8 @@ Fys. 15 (1920), no.~5.
 finite prime field, Izv. Akad. Nauk SSSR Ser. Mat. 33 (1969), 1171--1181.
 \bibitem{Bombieri1973} E. Bombieri, Counting points on curves over finite fields (d'après
 S.~A. Stepanov), Séminaire Bourbaki, exp. 430 (1972/73), Lecture Notes in Math. 383, Springer, 1974.
-\bibitem{Alpoge2026} L. Alpöge, Remark on the proof, \url{https://alpo.ge/remark.pdf}, 2026.
+\bibitem{Alpoge2026} L. Alpöge, untitled remark on the proof, with a timeline dated 6 October to
+16 November 2026, \url{https://alpo.ge/remark.pdf}, accessed 26 November 2026.
 \end{thebibliography}
 
 \end{document}

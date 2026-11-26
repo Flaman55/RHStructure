@@ -11,8 +11,8 @@ import New.Selmer.FitTwistsExist
 L. Alpöge describes the proof as a descendant of Stepanov's method for the Riemann Hypothesis over
 finite fields (remark, <https://alpo.ge/remark.pdf>): over `𝔽_q` an auxiliary function vanishing
 with multiplicity `E` at all `q` points has degree at least `E q`, and the balance `E ≈ √q` gives
-the error `√q`. Over the integers multiplicity is missing; in the proof each theta lift of a chain
-supplies one unit of it, and the chain has length `m ≈ √x`.
+the error `√q`. Over the integers multiplicity is missing; in the proof a chain of `m` theta
+lifts, each mimicking multiplicity, wins multiplicity `m`, with `m ≈ √x`.
 
 Three inequalities of the same shape, side by side:
 

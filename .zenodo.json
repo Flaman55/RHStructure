@@ -1,0 +1,16 @@
+{
+  "title": "Why the Lean proof of the Riemann Hypothesis works: Stepanov's balance in rings and arcs, and where the exponent 1/2 is set",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "creators": [{"name": "Flamandzki, Artur"}],
+  "description": "A structural reading of the Lean 4 proof of the Riemann Hypothesis and of GRH for Dirichlet L-functions by Levent Alpöge (with Claude), in the compact rewriting grh-compact by Luke Sernau and colleagues at Anthropic (with Claude). The proof is read as Stepanov's balance over the integers: a chain of m theta lifts wins multiplicity m, the level prime N is charged twice, and the square law m^2 ≲ x sets the exponent 1/2. The auxiliary object is split into its size, paid by the level, and its existence, a covering that halves; the Selmer twists are the price of divisibility. All structural statements are Lean theorems on the unchanged grh-compact, with the axioms propext, Classical.choice and Quot.sound. As an application: Lean deductions from Mathlib's RiemannHypothesis of psi(x) = x + O(x^(1/2+δ)) and of a prime in (x, x + x^(1/2+ε)] for large x (von Koch 1901), registered on Palomar as PALOMAR-2026-11-26-000056. Three open questions close the note. The proof of the Riemann Hypothesis is not a result of this work.",
+  "keywords": ["Riemann Hypothesis", "Lean 4", "Mathlib", "formal verification", "Stepanov's method", "primes in short intervals", "theta lifts"],
+  "license": "cc-by-4.0",
+  "related_identifiers": [
+    {"identifier": "https://github.com/Flaman55/RHStructure", "relation": "isSupplementedBy", "resource_type": "software"},
+    {"identifier": "https://github.com/Flaman55/RHShortIntervals", "relation": "isSupplementedBy", "resource_type": "software"},
+    {"identifier": "https://github.com/lsernau/grh-lean", "relation": "references", "resource_type": "software"},
+    {"identifier": "https://alpo.ge/remark.pdf", "relation": "references", "resource_type": "publication-other"},
+    {"identifier": "https://github.com/AlexKontorovich/PrimeNumberTheoremAnd", "relation": "references", "resource_type": "software"}
+  ]
+}
