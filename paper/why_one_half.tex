@@ -18,9 +18,9 @@
 \DeclareUrlCommand\lean{\urlstyle{tt}}
 \sloppy
 
-\title{Why the Lean proof of the Riemann Hypothesis works,\\
-and where its exponent $1/2$ is set:\\
-a reading in rings and arcs}
+\title{Why the Lean proof of the Riemann Hypothesis works:\\
+Stepanov's balance in rings and arcs,\\
+and where the exponent $1/2$ is set}
 \author{Artur Flamandzki}
 \date{Draft, 26 November 2026}
 
@@ -32,7 +32,12 @@ The Riemann Hypothesis, and the Generalized Riemann Hypothesis for Dirichlet $L$
 a proof in Lean~4 by Levent Alpöge, written with Claude, and a shorter rewriting of that proof,
 \emph{grh-compact}, by Luke Sernau and colleagues at Anthropic, also with Claude. This note does
 not give a new proof. It explains why that proof succeeds, in the language of rings, markers and
-arcs, and it locates the place where the exponent $1/2$ of the critical line is set. The prime-sum
+arcs, and it locates the place where the exponent $1/2$ of the critical line is set. The proof is,
+in Alpöge's words, a descendant of Stepanov's method for curves over finite fields, where an
+auxiliary function vanishing with multiplicity $E$ at $q$ points has degree at least $Eq$ and the
+balance $E\approx\sqrt q$ gives the error $\sqrt q$. Over the integers multiplicity is missing; in
+the proof each theta lift of a chain supplies one unit of it. We show, with Lean theorems, that the
+place where the proof sets $1/2$ is this balance in the form $m\approx\sqrt x$. The prime-sum
 remainder whose one-sided bound gives the zero-free half-plane is a weighted sum of excess turns of
 rings. The argument is a certificate of size against divisibility, the same kind as the central
 binomial certificate of Chebyshev and Erdős, run on a chain of $m$ theta lifts. Its saving is $1/m$,
@@ -102,6 +107,38 @@ formalizes it. Legendre's formula is classical and is taken here from Mathlib. T
 Section~\ref{sec:lever}, which changes a parameter of a checked proof and lets the checker show
 which statements break, follows the author's method of testing a structure by trying to break it.
 
+\section{The model: Stepanov's balance}\label{sec:stepanov}
+
+\paragraph{Over a finite field.} Stepanov proved the Riemann Hypothesis for hyperelliptic curves
+over $\mathbb F_p$ by an elementary method \cite{Stepanov1969}, which Bombieri extended to all curves
+\cite{Bombieri1973}. One builds an auxiliary function that vanishes with multiplicity at least $E$
+at each of the $N$ rational points. A non-zero function cannot have more zeros, counted with
+multiplicity, than its degree:
+\[
+E\cdot N\;\le\;\deg .
+\]
+The construction of the auxiliary function is a dimension count, and it succeeds only while the
+multiplicity stays below about $\sqrt q$; with $E\approx\sqrt q$ the inequality gives
+$N\le q+O(\sqrt q)$. The exponent $1/2$ is the balance between the multiplicity one can afford and
+the degree it costs. grh-compact proves the first inequality in the form it uses
+(\lean{stepanov_count}, here \lean{Structural.stepanov}): a non-zero polynomial divisible by
+$(X-\iota x)^E$ at every point $x$ of a local ring with $q$ residue classes has degree at least
+$Eq$.
+
+\paragraph{Over the integers.} Alpöge describes his proof as a descendant of Stepanov's argument,
+and names its difficulty: multiplicity is hard to find over the integers, it would correspond to
+differentiating whole numbers \cite{Alpoge2026}. His answer is to chain theta lifts, each lift
+supplying one unit of multiplicity, with a chain of length about $\sqrt X$ for a sum of length
+$X$. In grh-compact the chain has $m\in[\sqrt x,2\sqrt x]$ lifts.
+
+\paragraph{Multiplicity one.} The certificate of Chebyshev and Erdős for Bertrand's postulate has
+the same shape, size against divisibility of $\binom{2n}{n}$, with multiplicity at most one above
+$\sqrt{2n}$ (Section~\ref{sec:certificate}). It gives bounds of Chebyshev order and not $1/2$: with
+multiplicity one there is nothing to balance. The rest of this note follows the three pieces of
+Stepanov's balance through the proof: the size (Theorems A and B of grh-compact), the
+divisibility (Theorem C, the product formula), and the multiplicity (the $m$ lifts, charged to the
+level $N$).
+
 \section{Rings, markers and arcs}\label{sec:rings}
 
 \begin{definition}
@@ -167,8 +204,11 @@ For $n\ge4$, $4^n<n\binom{2n}{n}$. For a prime $p$ and $b>\log_p(2n)$,
 v_p\tbinom{2n}{n}+2\sum_{1\le i<b}\operatorname{arc}(n,p^i)=\sum_{1\le i<b}\operatorname{arc}(2n,p^i).
 \]
 \end{theorem}
-Over $\mathbb Q$, with one binomial coefficient, this certificate gives bounds of Chebyshev order
-only.
+\begin{theorem}[Multiplicity one, \lean{Structural.erdos_multiplicity_one}]
+If $2n<p^2$ then $v_p\binom{2n}{n}\le1$.
+\end{theorem}
+Over $\mathbb Q$, with one binomial coefficient and multiplicity one above $\sqrt{2n}$, this
+certificate gives bounds of Chebyshev order only.
 
 \paragraph{In grh-compact.} The quantity is a covolume of a chain of $m$ theta lifts over a CM
 field. Theorems A and B of grh-compact bound it by size, Theorem C by divisibility, and the product
@@ -204,13 +244,22 @@ $m\log b\le\log N$ (\lean{Data.log_N_mem_Icc}), because it pays the excesses of 
 budget (\lean{Data.sum_allowedLoss_mul_log_le}).
 \end{proof}
 
+\begin{theorem}[Stepanov's inequality for the level, \lean{Structural.level_stepanov}]
+$m\log b\le\log N$.
+\end{theorem}
+This is the first charge, in the form $E\cdot q\le\deg$: the multiplicity $m$ times the size
+$\log b$ of a point is at most the ``degree'' $\log N$ of the level; in arcs, $N$ has a non-zero arc
+on every ring $\lfloor b\rfloor^i$, $i\le m$ (\lean{Structural.level_arcs}). The second charge, the
+allowed loss $4mfb$, is the price of that multiplicity, and the two together give the balance.
+
 \begin{theorem}[Square law of the lever, \lean{Structural.lifts_sq_le}]
 \[
 m^2\cdot 4b\;\le\;a\,(\log b)^2 .
 \]
 \end{theorem}
 In grh-compact $x b\le a\le e\,x b$, so $m^2\le \tfrac e4\,x(\log b)^2$: at most about $\sqrt x$
-lifts, and a saving of at most about $x^{-1/2}$. The final bound of grh-compact,
+lifts, and a saving of at most about $x^{-1/2}$. This is Stepanov's $E\approx\sqrt q$ in the form
+$m\approx\sqrt x$. The final bound of grh-compact,
 $R_{N_0}(x)\le x^{8\varepsilon-1/2}$ (Theorem~\ref{thm:onesided}), sits at this edge.
 
 \paragraph{The band, by experiment.} In a copy of grh-compact the number of lifts was changed from
@@ -318,6 +367,14 @@ Selmer bounds keep the denominators of the twisted lifts small). Over $\mathbb Q
 of $\binom{2n}{n}$ is free, by arcs; over the CM field it costs the Selmer bounds. That is the
 difference between Chebyshev's bounds and the critical line.
 
+\paragraph{The price of divisibility: from $2/3$ to $1/2$.} In Stepanov's balance this is the
+second charge. Alpöge records that, judging by the cost of each lift alone, the method would stop
+at $2/3$; the division of the auxiliary object and the twists that keep its denominators small are
+what bring it to $1/2$ \cite{Alpoge2026}. The table agrees: the Selmer step is the heaviest step
+that no other step needs. In our reading, over $\mathbb F_q$ the corresponding price is paid by the Frobenius,
+which makes $x\mapsto x^q$ a polynomial of degree $q$ and the multiplicity cheap; over the integers
+there is no Frobenius, and the twists stand in its place.
+
 \section{An application: primes in short intervals}\label{sec:short}
 
 The two theorems of this section assume Mathlib's \lean{RiemannHypothesis}. They are proved in
@@ -424,13 +481,18 @@ same three axioms. The experiment of Section~\ref{sec:lever} is the script
 \paragraph{Writing.} The Lean files and this text were written with Claude (Anthropic) under the
 author's direction; the author ran every build.
 
-\begin{thebibliography}{9}
+\begin{thebibliography}{99}
 \bibitem{vonKoch1901} H. von Koch, Sur la distribution des nombres premiers, Acta Math. 24 (1901),
 159--182, \url{https://doi.org/10.1007/BF02403071}.
 \bibitem{Cramer1920} H. Cramér, Some theorems concerning prime numbers, Arkiv för Mat., Astr. och
 Fys. 15 (1920), no.~5.
 \bibitem{PNT} A. Kontorovich, T. Tao et al., PrimeNumberTheoremAnd,
 \url{https://github.com/AlexKontorovich/PrimeNumberTheoremAnd}, commit \texttt{e9906138410f}.
+\bibitem{Stepanov1969} S.~A. Stepanov, On the number of points of a hyperelliptic curve over a
+finite prime field, Izv. Akad. Nauk SSSR Ser. Mat. 33 (1969), 1171--1181.
+\bibitem{Bombieri1973} E. Bombieri, Counting points on curves over finite fields (d'après
+S.~A. Stepanov), Séminaire Bourbaki, exp. 430 (1972/73), Lecture Notes in Math. 383, Springer, 1974.
+\bibitem{Alpoge2026} L. Alpöge, Remark on the proof, \url{https://alpo.ge/remark.pdf}, 2026.
 \end{thebibliography}
 
 \end{document}
