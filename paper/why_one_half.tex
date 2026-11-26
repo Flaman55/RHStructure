@@ -22,7 +22,7 @@
 Stepanov's balance in rings and arcs,\\
 and where the exponent $1/2$ is set}
 \author{Artur Flamandzki}
-\date{Draft, 26 November 2026}
+\date{26 November 2026}
 
 \begin{document}
 \maketitle
@@ -137,7 +137,7 @@ $\sqrt{2n}$ (Section~\ref{sec:certificate}). It gives bounds of Chebyshev order 
 multiplicity one there is nothing to balance. The rest of this note follows the three pieces of
 Stepanov's balance through the proof: the size (Theorems A and B of grh-compact), the
 divisibility (Theorem C, the product formula), and the multiplicity (the $m$ lifts, charged to the
-level $N$).
+level $N$); Section~\ref{sec:auxiliary} takes the auxiliary object apart.
 
 \section{Rings, markers and arcs}\label{sec:rings}
 
@@ -317,6 +317,50 @@ at which a quantity is counted against itself. The scales are not the same: in g
 $\log x_1\ge10^6\log x$ and $\log b\ge10^6\log x_1$, so the window of the data is not the window
 $(P,P^2)$ of a prime base; what the two share is the square threshold, not the window.
 
+\section{The auxiliary object}\label{sec:auxiliary}
+
+Stepanov's auxiliary polynomial has two properties. It exists with all the vanishing conditions
+imposed, because there are more monomials than conditions; and it is small, because its degree is
+bounded. In grh-compact the auxiliary object is the family of projected Poincaré series of
+Theorem~A, and the two properties are proved apart.
+
+\paragraph{Size is paid by the level.}
+\begin{theorem}[\lean{Structural.auxiliary_size}, grh-compact's \lean{Data.heightPerRow_le}]
+The height per row is at most $h_{\mathrm{main}}-m\cdot\mathrm{rem}+\mathcal B$, with
+$h_{\mathrm{main}}=mk\,\mathsf U$ the main term, $\mathrm{rem}$ the remainder of
+Section~\ref{sec:remainder} and $\mathcal B$ the budget.
+\end{theorem}
+The proof is the choice of the level $N$ (Section~\ref{sec:lever}): $\log N$ is fixed so that the
+level pays the excess of the lifts' size over their expected divisibility. Theorem~A takes this
+bound and adds the index bound, which is the allowed loss, the second charge of the lever. So the
+smallness of the auxiliary object is the lever itself.
+
+\paragraph{Existence is a covering that halves.}
+\begin{theorem}[\lean{Structural.few_translates}, grh-compact's \lean{exists_few_translates}]
+Let $B_s\colon V\to W$ be linear maps such that for every subspace $F\subseteq W$, with
+$\varphi=\dim F/\dim W$, some $s$ has $\dim B_s^{-1}F\le\bigl(\tfrac{1+\varphi}2+\eta\bigr)\dim V$.
+Then some set $t$ with $|t|\dim V\le5\dim W\log(1+\eta^{-1})$ has
+$\dim\sum_{s\in t}B_s(V)\ge(1-4\eta)\dim W$.
+\end{theorem}
+Each new translate keeps, modulo what is already spanned, about half of what is still missing; the
+missing dimension halves at each round, and $\log(1+b^2)$ rounds leave a share $4/b^2$ (Theorem~B,
+\lean{Data.enough_forms}, with $\eta=b^{-2}$). This is the dimension count of Stepanov's method in
+the form of a greedy covering; in arcs it is the count of rings, a logarithm, and it costs only
+the factor $\log(1+b^2)$ that the budget absorbs.
+
+\paragraph{The spread is analytic.}
+\begin{theorem}[\lean{Structural.columns_fill_rows}, grh-compact's
+\lean{Data.ramifiedColumns_fill_rows}]
+The level translates of the projected Poincaré series satisfy the hypothesis of the covering with
+$\eta=b^{-2}$.
+\end{theorem}
+This is the one input of the auxiliary object that is not a count. It comes from the second moment
+of the Poincaré series over the level translates (New/Filling/Moments): the mean of the squared
+Hilbert--Schmidt norm is at most nearly $(\dim\text{columns})^2/(\text{expected rows})$, through
+Petersson's formula, Kloosterman sums as local orbital integrals, and a sieve; a variance
+inequality turns the mean into large rank of some translate. Over $\mathbb F_q$ the corresponding
+step is the count of monomials; here it is an orthogonality.
+
 \section{The spine}\label{sec:spine}
 
 \begin{theorem}[One-sided bound, \lean{Structural.one_sided_bound}]\label{thm:onesided}
@@ -379,8 +423,8 @@ there is no Frobenius, and the twists stand in its place.
 
 The two theorems of this section assume Mathlib's \lean{RiemannHypothesis}. They are proved in
 the repository RHShortIntervals (\url{https://github.com/Flaman55/RHShortIntervals}), which depends
-only on Mathlib and is the version submitted for review; this repository applies them to the
-theorem of grh-compact.
+only on Mathlib and is registered on Palomar as PALOMAR-2026-11-26-000056 (version~1, commit
+\texttt{f9269d3}); this repository applies them to the theorem of grh-compact.
 
 \begin{theorem}[\lean{Submission.chebyshev_psi_error_of_RH}]\label{thm:psi}
 Assume the Riemann Hypothesis. For every $\delta>0$ there are $C$ and $x_0$ such that $|\psi(x)-x|\le C\,x^{1/2+\delta}$ for all
@@ -463,6 +507,11 @@ same edge; a different choice of level might avoid the double charge.
 \item The heuristic that the Riemann Hypothesis is a square-root law is old (cancellation as in a
 random walk). What is stated here is the mechanism that produces the square root in this proof.
 \item The weights of Section~\ref{sec:weights} depend on how grh-compact factors its argument.
+\item Two inputs are located and weighed here but not derived in rings and arcs: the second
+moment of the Poincaré series that gives the spread of the auxiliary object
+(Section~\ref{sec:auxiliary}), and the mechanism by which the Selmer twists keep the denominators
+small (the step from $2/3$ to $1/2$). The comparison with the Frobenius over $\mathbb F_q$ is a reading, not a
+theorem.
 \end{itemize}
 
 \appendix
@@ -471,8 +520,9 @@ random walk). What is stated here is the mechanism that produces the square root
 grh-compact at the commit above builds in 36 minutes on the author's PC (Lean v4.35.0) and its five
 theorems print only \lean{propext}, \lean{Classical.choice}, \lean{Quot.sound}. The files
 \texttt{Structural/Arcs.lean}, \texttt{Certificate.lean}, \texttt{Lever.lean},
-\texttt{Spine.lean} are added as a library on top of it without changing it; all their theorems
-print the same three axioms. The repository is a standalone Lake project that requires
+\texttt{Spine.lean}, \texttt{Stepanov.lean} are added as a library on top of it without changing
+it; all their theorems print the same three axioms. After \texttt{lake build}, the command
+\texttt{lake env lean scripts/Axioms.lean} prints the axioms of every theorem named in this note. The repository is a standalone Lake project that requires
 grh-compact at the commit above; \texttt{PNTPort/} holds the ported files of PrimeNumberTheoremAnd
 and \texttt{Applications/} the four steps of Section~\ref{sec:short}, whose theorems print the
 same three axioms. The experiment of Section~\ref{sec:lever} is the script

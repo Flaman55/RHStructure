@@ -1,6 +1,8 @@
 import New.TwistedHecke.RootLemma
 import Structural.Lever
 import Structural.Certificate
+import New.Endgame.ShortAndEnough
+import New.Filling.FillingTheorem
 
 /-!
 # The lever as Stepanov's inequality
@@ -44,5 +46,33 @@ theorem level_stepanov {P : Parameters} (D : Data P) : (D.m : ℝ) * D.logB ≤ 
 
 /-- Multiplicity one above the square root in the Chebyshev–Erdős certificate. -/
 alias erdos_multiplicity_one := centralBinom_factorization_le_one
+
+/-! ## The auxiliary object
+
+Stepanov's auxiliary polynomial has two properties: it exists with many conditions imposed (a
+dimension count), and it is small (its degree). In grh-compact the auxiliary object is the family
+of projected Poincaré series of Theorem A, and the two properties come apart as follows.
+
+* Size is paid by the level: `auxiliary_size` (grh-compact's `Data.heightPerRow_le`) bounds the
+  height per row by the main term minus `m` times the remainder, plus the budget. This is the
+  choice of the level `N`, the lever of `level_double_charge`.
+* Existence is a greedy covering: `few_translates` (grh-compact's `exists_few_translates`). If for
+  every subspace `F` some translate keeps at least about half of what `F` misses (`IsSpread`), a
+  logarithmic number of translates nearly spans. Each round halves the missing dimension.
+* The spread itself, `columns_fill_rows` (grh-compact's `Data.ramifiedColumns_fill_rows`), comes from
+  the second moment of the Poincaré series (New.Filling.Moments): Petersson, Kloosterman sums as
+  local orbital integrals, a sieve. This is the one input of the auxiliary object that is analytic
+  and not a count.
+-/
+
+/-- Size of the auxiliary object, paid by the level (grh-compact's `Data.heightPerRow_le`). -/
+alias auxiliary_size := _root_.Data.heightPerRow_le
+
+/-- Existence of the auxiliary object by greedy covering (grh-compact's `exists_few_translates`). -/
+alias few_translates := _root_.exists_few_translates
+
+/-- The spread hypothesis of the covering, from the second moment of the Poincaré series
+(grh-compact's `Data.ramifiedColumns_fill_rows`). -/
+alias columns_fill_rows := _root_.Data.ramifiedColumns_fill_rows
 
 end Structural
