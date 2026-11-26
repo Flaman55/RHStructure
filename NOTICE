@@ -1,0 +1,18 @@
+RHStructure
+Copyright 2026 Artur Flamandzki
+
+This repository depends on, and does not modify, grh-lean (compact edition):
+  https://github.com/lsernau/grh-lean, commit 72fead102f663d5c7a407964a13dc0cf9d977207,
+  directory grh-compact. Copyright 2026 Anthropic, PBC. Licensed under the Apache License,
+  Version 2.0. Written by Luke Sernau and colleagues at Anthropic, with Claude.
+grh-compact is a rewriting of the Lean proof of the Riemann Hypothesis and of the Generalized
+Riemann Hypothesis for Dirichlet L-functions by Levent Alpoge, with Claude
+(https://alpo.ge/remark.pdf).
+
+grh-compact is fetched by Lake at build time and is not redistributed here. No file of
+grh-compact is copied into this repository; the files under Structural/ are new and import
+grh-compact's modules.
+
+This repository also contains files of PrimeNumberTheoremAnd
+(https://github.com/AlexKontorovich/PrimeNumberTheoremAnd, commit e9906138410f, Apache-2.0),
+under PNTPort/, changed as described in PORTING.md; their original copyright headers are kept.

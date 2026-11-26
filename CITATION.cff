@@ -1,0 +1,57 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it together with the two sources of the proof it reads (see references)."
+title: "RHStructure: primes in short intervals from the Lean proof of the Riemann Hypothesis"
+abstract: >-
+  A Lean 4 deduction, from Mathlib's RiemannHypothesis, of psi(x) = x + O(x^(1/2+delta)) and of a
+  prime in (x, x + x^(1/2+epsilon)] for large x (von Koch 1901), holding without hypotheses with
+  RH supplied by grh-compact. Also a structural reading, in the language of rings and arcs, of the Lean 4 proof of the Riemann
+  Hypothesis and of GRH for Dirichlet L-functions by Levent Alpoge (with Claude), in the
+  compact rewriting grh-compact by Luke Sernau and colleagues at Anthropic (with Claude).
+  The Lean files under Structural/ build on the unchanged grh-compact and state the chain of
+  the proof in ring and arc terms, including the lever that fixes the exponent 1/2. The proof
+  of the Riemann Hypothesis is not a result of this work.
+type: software
+authors:
+  - family-names: Flamandzki
+    given-names: Artur
+    email: flamandzki.artur@gmail.com
+version: 0.1.0
+license: Apache-2.0
+repository-code: "https://github.com/Flaman55/RHStructure"
+keywords:
+  - Lean 4
+  - Mathlib
+  - Riemann Hypothesis
+  - formal verification
+references:
+  - type: software
+    title: "grh-lean (compact edition)"
+    authors:
+      - family-names: Sernau
+        given-names: Luke
+    repository-code: "https://github.com/lsernau/grh-lean"
+    commit: "72fead102f663d5c7a407964a13dc0cf9d977207"
+    license: Apache-2.0
+  - type: report
+    title: "Lean proof of the Riemann Hypothesis and GRH for Dirichlet L-functions"
+    authors:
+      - family-names: Alpoge
+        given-names: Levent
+    url: "https://alpo.ge/remark.pdf"
+  - type: software
+    title: "PrimeNumberTheoremAnd"
+    authors:
+      - family-names: Kontorovich
+        given-names: Alex
+      - family-names: Tao
+        given-names: Terence
+    repository-code: "https://github.com/AlexKontorovich/PrimeNumberTheoremAnd"
+    commit: "e9906138410f8f76ca66b9bc252d0993f3ee348c"
+    license: Apache-2.0
+  - type: software
+    title: "ArcOrder"
+    authors:
+      - family-names: Flamandzki
+        given-names: Artur
+    repository-code: "https://github.com/Flaman55/ArcOrder"
+    commit: "dc1dff7"

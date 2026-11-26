@@ -1,0 +1,39 @@
+name = "RHStructure"
+defaultTargets = ["Structural", "PNTPort", "Applications", "Challenge", "Solution"]
+moreLeanArgs = ["--tstack=400000"]
+
+[leanOptions]
+autoImplicit = false
+relaxedAutoImplicit = false
+maxSynthPendingDepth = 3
+pp.unicode.fun = true
+maxHeartbeats = 4000000
+
+# grh-compact (Luke Sernau and colleagues at Anthropic, with Claude), used unchanged as a
+# dependency at a pinned commit. Mathlib comes from its manifest (56a005855ea1...).
+[[require]]
+name = "GRH"
+git = "https://github.com/lsernau/grh-lean"
+rev = "72fead102f663d5c7a407964a13dc0cf9d977207"
+subDir = "grh-compact"
+
+[[lean_lib]]
+name = "Structural"
+globs = ["Structural.+"]
+
+# Files of PrimeNumberTheoremAnd (Apache-2.0), ported to the Mathlib pinned by grh-compact.
+[[lean_lib]]
+name = "PNTPort"
+globs = ["PNTPort.+"]
+
+[[lean_lib]]
+name = "Applications"
+globs = ["Applications.+"]
+
+[[lean_lib]]
+name = "Challenge"
+roots = ["Challenge"]
+
+[[lean_lib]]
+name = "Solution"
+roots = ["Solution"]

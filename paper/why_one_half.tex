@@ -1,0 +1,433 @@
+\documentclass[11pt]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\usepackage{url}
+\def\UrlBreaks{\do\.\do\_\do\/\do\A\do\B\do\C\do\D\do\E\do\F\do\G\do\H\do\I\do\L\do\M\do\N\do\P\do\R\do\S\do\T\do\V\do\W}
+\DeclareUrlCommand\lean{\urlstyle{tt}}
+\sloppy
+
+\title{Why the Lean proof of the Riemann Hypothesis works,\\
+and where its exponent $1/2$ is set:\\
+a reading in rings and arcs}
+\author{Artur Flamandzki}
+\date{Draft, 26 November 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The Riemann Hypothesis, and the Generalized Riemann Hypothesis for Dirichlet $L$-functions, have
+a proof in Lean~4 by Levent Alpöge, written with Claude, and a shorter rewriting of that proof,
+\emph{grh-compact}, by Luke Sernau and colleagues at Anthropic, also with Claude. This note does
+not give a new proof. It explains why that proof succeeds, in the language of rings, markers and
+arcs, and it locates the place where the exponent $1/2$ of the critical line is set. The prime-sum
+remainder whose one-sided bound gives the zero-free half-plane is a weighted sum of excess turns of
+rings. The argument is a certificate of size against divisibility, the same kind as the central
+binomial certificate of Chebyshev and Erdős, run on a chain of $m$ theta lifts. Its saving is $1/m$,
+and one prime, the level $N$, is charged by every lift twice: by its size and by its allowed loss.
+This gives the square law $m^2\cdot 4b\le a(\log b)^2$, so $m\lesssim\sqrt x$ and the saving cannot
+beat $x^{-1/2}$. All statements are Lean theorems built on the unchanged grh-compact and use only the
+axioms \lean{propext}, \lean{Classical.choice} and \lean{Quot.sound}. An experiment that changes
+the number of lifts to $m\sim x^\theta$ shows, by the lemmas Lean rejects, that this proof admits
+$\theta$ only in the band $5/11<\theta\le 1/2$.
+
+As an application, the note deduces in Lean, from Mathlib's \lean{RiemannHypothesis}, the
+classical consequences $|\psi(x)-x|\le C x^{1/2+\delta}$ and, for every $\varepsilon>0$ and all
+large $x$, a prime in $(x,x+x^{1/2+\varepsilon}]$ (von Koch; Cramér). With the Riemann Hypothesis
+supplied by grh-compact, both statements hold in Lean without hypotheses
+(\lean{Submission.chebyshev_psi_error}, \lean{Submission.exists_prime_in_short_interval}).
+\end{abstract}
+
+\section{Sources and what this note is}
+
+\begin{itemize}
+\item \textbf{The proof.} Levent Alpöge, with Claude: a Lean~4 proof of the Riemann Hypothesis and
+of the Generalized Riemann Hypothesis for Dirichlet $L$-functions, announced in November 2026
+(\url{https://alpo.ge/remark.pdf}).
+\item \textbf{The rewriting used here.} Luke Sernau and colleagues at Anthropic, with Claude:
+\emph{grh-lean}, compact edition (\url{https://github.com/lsernau/grh-lean}, folder
+\texttt{grh-compact}, commit \texttt{72fead102f663d5c7a407964a13dc0cf9d977207}), Lean v4.35.0,
+Mathlib commit \texttt{56a00585}, Apache License 2.0, Copyright 2026 Anthropic, PBC. It follows
+Alpöge's method; many steps are proved there by other arguments.
+\item \textbf{Own tools.} The reading uses tools from the author's earlier work, listed in
+Section~\ref{sec:tools}.
+\end{itemize}
+
+Every object of the proof used below (the data $\mathcal D$, the numbers $m,f,a,b,N$, the remainder
+\lean{primeError}, the weights \lean{lambdaClass}, the budget, the inequality $(\star)$) is the one of
+grh-compact; we use its names and refer to its \texttt{GUIDE.md} and \texttt{src/New/Main.lean} for
+their definitions. The Lean files of this note, \texttt{Structural/*.lean}, import grh-compact and
+change nothing in it. Each theorem below names the Lean declaration that states it.
+
+The contribution is an answer to two questions about this proof: why it succeeds, and why it gives
+exactly $1/2$. It is not a claim to have proved the Riemann Hypothesis.
+
+\section{Tools from the author's earlier work}\label{sec:tools}
+
+The reading below is built from tools that the author developed earlier, independently of the
+proof, while studying primes as rings. The mathematics of the proof's steps is grh-compact's; what
+comes from these tools is the language of the reading and the comparisons it draws.
+
+\begin{center}
+\begin{tabular}{>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}p{5.6cm}>{\raggedright\arraybackslash}p{5.6cm}}
+\toprule
+work & what it contains & what this note takes from it\\
+\midrule
+ArcOrder (public) & every $p$ a ring with marker $N\bmod p$ and arc $\lfloor N/p\rfloor$; order of markers inside an arc; the Bertrand band; hits in a window; an empirical edge of the ordered region; tools for an exact search for prime gaps & the vocabulary of Section~\ref{sec:rings}; the reading of the remainder as excess turns (Section~\ref{sec:remainder})\\
+StructuralBertrand (public) & a structural sieve for Bertrand's postulate; deterministic reach $(P_k,P_k^2)$ of a prime base; a self-contained central binomial certificate (\lean{binomial_contradiction}) & the certificate of size against divisibility (Section~\ref{sec:certificate}); the square-law shape of a reach (Section~\ref{sec:lever})\\
+Structural Window (public) & a moving window $(A,A+W]$, width laws, the engine \lean{prime_of_isVoid} & the reading of the second scale as a window (Section~\ref{sec:spine}); the application planned next\\
+Irreducibility (public) & a residue number system computed by counting, without primes in the definitions & the reading of the weights as masks on markers (Section~\ref{sec:remainder})\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The definitions of marker and arc are restated in \texttt{Structural/Arcs.lean}, so the Lean files
+of this note build without ArcOrder. Public repositories: \url{https://github.com/Flaman55/ArcOrder}, \url{https://github.com/Flaman55/StructuralBertrand},
+\url{https://github.com/Flaman55/Structural-Window}, \url{https://github.com/Flaman55/Irreducibility}.
+
+The central binomial certificate itself is classical (Chebyshev; Erdős); StructuralBertrand
+formalizes it. Legendre's formula is classical and is taken here from Mathlib. The experiment of
+Section~\ref{sec:lever}, which changes a parameter of a checked proof and lets the checker show
+which statements break, follows the author's method of testing a structure by trying to break it.
+
+\section{Rings, markers and arcs}\label{sec:rings}
+
+\begin{definition}
+Every $p\ge1$ is a ring that turns one step per unit of $\mathbb N$. At position $N$ its
+\emph{marker} is $N\bmod p$ (\lean{Structural.marker}) and its \emph{arc} is $\lfloor N/p\rfloor$,
+the number of full turns (\lean{Structural.arc}). Over a length $A>0$ the ring $\nu$ makes
+$A/\nu$ turns, not rounded (\lean{Structural.turns}).
+\end{definition}
+
+\begin{theorem}[\lean{Structural.arc_mul_add_marker}, \lean{Structural.arc_le_turns},
+\lean{Structural.turns_lt_arc_add_one}]
+$p\cdot\operatorname{arc}(N,p)+\operatorname{marker}(N,p)=N$, and for $p>0$,
+$\operatorname{arc}(N,p)\le \operatorname{turns}(N,p)<\operatorname{arc}(N,p)+1$.
+\end{theorem}
+
+\begin{theorem}[Divisibility counted by turns, \lean{Structural.padicValNat_factorial_eq_sum_arcs}]
+For a prime $p$ and $b>\log_p N$,
+\[
+v_p(N!)=\sum_{1\le i<b}\operatorname{arc}(N,p^i).
+\]
+\end{theorem}
+This is Legendre's formula (Mathlib's \lean{padicValNat_factorial}) read as arcs: the divisibility
+of $N!$ by $p$ is the number of full turns of the rings $p,p^2,p^3,\dots$ up to $N$.
+
+\section{The remainder is a sum of excess turns}\label{sec:remainder}
+
+grh-compact fixes a prime $d\equiv7\bmod 8$ and a modulus $M$, and weighs the ring $\nu$ by
+\[
+\lambda(\nu)=\Lambda(\nu)\bigl(1-(\tfrac{\nu}{d})\bigr)\quad\text{if }\nu\equiv1\bmod M,\qquad
+\lambda(\nu)=0\text{ otherwise}
+\]
+(\lean{lambdaClass}): the rings whose marker modulo $M$ is $1$, weighed by the quadratic-residue
+mask modulo $d$. Its remainder is $R_M(x)=\sum_{\nu\le x}\lambda(\nu)(1/\nu-1/x)-\log x/\varphi(M)
+-\operatorname{Re}\mathcal L(1)$, with $\mathcal L=$ \lean{logDerivMean} (\lean{primeError}).
+
+\begin{theorem}[\lean{Structural.primeError_eq_sum_excess_turns}]
+For $A\in\mathbb N$ and real $0<z\le A$,
+\[
+R_M(z)=\sum_{1\le\nu\le A}\frac{\lambda(\nu)\,\bigl(\operatorname{turns}(A,\nu)-\operatorname{turns}(A,z)\bigr)^+}{A}
+-\frac{\log z}{\varphi(M)}-\operatorname{Re}\mathcal L(1).
+\]
+\end{theorem}
+The remainder counts, ring by ring, the turns of $\nu$ over the length $A$ in excess of the turns
+of the cutoff ring $z$, less the expected amount. This is grh-compact's \lean{primeError_eq_sum},
+restated.
+
+\begin{theorem}[\lean{Structural.weight_nonneg}]
+$\lambda(\nu)\ge0$ for every $\nu$.
+\end{theorem}
+Positivity is what Landau's lemma needs in Section~\ref{sec:spine}; it is why the weight counts the
+primes that do not split in $\mathbb Q(\sqrt{-d})$.
+
+\section{The certificate: size against divisibility}\label{sec:certificate}
+
+A certificate is a non-zero quantity bounded from above by its size and from below by its
+divisibility, counted ring by ring; the product formula turns divisibility into size.
+
+\paragraph{Over $\mathbb Q$.} The central binomial coefficient is the certificate of Chebyshev and
+Erdős, used in StructuralBertrand.
+\begin{theorem}[\lean{Structural.centralBinom_size}, \lean{Structural.centralBinom_arcs}]
+For $n\ge4$, $4^n<n\binom{2n}{n}$. For a prime $p$ and $b>\log_p(2n)$,
+\[
+v_p\tbinom{2n}{n}+2\sum_{1\le i<b}\operatorname{arc}(n,p^i)=\sum_{1\le i<b}\operatorname{arc}(2n,p^i).
+\]
+\end{theorem}
+Over $\mathbb Q$, with one binomial coefficient, this certificate gives bounds of Chebyshev order
+only.
+
+\paragraph{In grh-compact.} The quantity is a covolume of a chain of $m$ theta lifts over a CM
+field. Theorems A and B of grh-compact bound it by size, Theorem C by divisibility, and the product
+formula closes the certificate.
+\begin{theorem}[Product formula, \lean{Structural.product_formula}]
+If the constant family $1$ has height at most $c$ (\lean{HeightLe}), then $c\ge0$.
+\end{theorem}
+\begin{theorem}[The certificate closed, \lean{Structural.certificate}]
+For admissible data $\mathcal D$: $m\cdot\mathrm{rem}\le(\log b)^2\cdot\mathrm{budget}$, where
+$\mathrm{budget}=f\,a(\log b)^3$ (grh-compact's \lean{star_inequality}).
+\end{theorem}
+Here $\mathrm{rem}$ is grh-compact's remainder, a combination of the excess-turns sums $R_M$ at the
+scales $x$ and $x_1$ (\lean{Data.remainder_eq}), and $m$ is the number of lifts.
+
+\section{Where $1/2$ is set}\label{sec:lever}
+
+The saving of the certificate is $1/m$: the larger $m$, the better the bound. What stops $m$ is one
+prime, the level $N$, which carries the bill of all $m$ lifts.
+
+\begin{theorem}[\lean{Structural.level_not_mem_nonsplitPrimes}]
+The level $N$ is not one of the non-split primes below $x_1$.
+\end{theorem}
+
+\begin{theorem}[Double charge of the level, \lean{Structural.level_double_charge}]
+\[
+4\,m\,f\,b\cdot(m\log b)\;\le\;\mathrm{budget}=f\,a(\log b)^3.
+\]
+\end{theorem}
+\begin{proof}[Reading of the Lean proof]
+The allowed loss at the level is $4mfb$ (\lean{Data.allowedLoss}); the level must also be large,
+$m\log b\le\log N$ (\lean{Data.log_N_mem_Icc}), because it pays the excesses of the $m$ lifts
+(\lean{Data.heightPerRow_le}); and the total allowed loss weighed by $\log p$ stays within the
+budget (\lean{Data.sum_allowedLoss_mul_log_le}).
+\end{proof}
+
+\begin{theorem}[Square law of the lever, \lean{Structural.lifts_sq_le}]
+\[
+m^2\cdot 4b\;\le\;a\,(\log b)^2 .
+\]
+\end{theorem}
+In grh-compact $x b\le a\le e\,x b$, so $m^2\le \tfrac e4\,x(\log b)^2$: at most about $\sqrt x$
+lifts, and a saving of at most about $x^{-1/2}$. The final bound of grh-compact,
+$R_{N_0}(x)\le x^{8\varepsilon-1/2}$ (Theorem~\ref{thm:onesided}), sits at this edge.
+
+\paragraph{The band, by experiment.} In a copy of grh-compact the number of lifts was changed from
+$m\sim x^{1/2}$ to $m\sim x^\theta$, together with every exponent derived from it: the tower
+$2^s=m^{22}$, hence $\sim x^{22\theta}$ tops and infinite places, the root discriminant, the
+period $\Omega$, $\log N$, the rank $n(m)$, the order of the chosen group, and the choice of $m$ in
+the construction of the data. Lean then rejects lemmas of the argument itself:
+
+\begin{center}
+\begin{tabular}{lp{7cm}l}
+\toprule
+$\theta$ & rejected lemma & condition in exponents of $x$\\
+\midrule
+$2/5$ & \lean{Curve/DepthPairs} (l.~90), \lean{Selmer/ThickSpacing} (l.~57) & $22\theta>10$\\
+$3/5$ & \lean{Columns/SizeEstimates.sum_allowedLoss_mul_log_le} & $2\theta<1$\\
+$3/5$ & \lean{Filling/FillingData} (l.~140) & $9\theta<5$ (not binding)\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The lower edge $\theta>5/11$ (for ranks $r\sim x^5$) says that the tower of roots of unity,
+whose Frobenius arc has length $2^s=m^{22}$, must exceed $r^2\sim x^{10}$; otherwise three thick
+places fit on one short arc and the control of divisibility fails. The upper edge $\theta\le1/2$
+is the double charge of the level. Earlier versions of the patch stopped at exponents derived from
+$1/2$ that they had not rewritten; those failures are not counted.
+
+\paragraph{Reading.} One ring, the level $N$, carries the bill of all $m$ lifts; its size and its
+loss both grow with $m$, and their product must fit in the length $a\approx xb$ of the window. The
+lever obeys a square law $m^2\le x$, of the same shape as the deterministic reach $(P_k,P_k^2)$ of a
+prime base (StructuralBertrand) and the edge $p^2\approx c\,N\ln p$ of ordered arcs (ArcOrder).
+
+\paragraph{The square threshold in arcs.} The two square laws can be put side by side in the
+language of Section~\ref{sec:rings}. In the certificate of Chebyshev and Erd\H{o}s, a prime above
+$\sqrt{N}$ has an arc only on its first ring, so it enters the central binomial coefficient at most
+once:
+
+\begin{theorem}[\lean{Structural.arc_eq_zero_of_lt_sq}, \lean{Structural.centralBinom_factorization_le_one}]
+If $N<p^2$ and $i\ge2$, then $\mathrm{arc}(N,p^i)=0$. If $2n<p^2$, then $v_p\binom{2n}{n}\le1$.
+\end{theorem}
+
+\noindent Only the primes below $\sqrt{2n}$ can meet themselves, and that is where the exponent
+$1/2$ of Erd\H{o}s' bound $(2n)^{\sqrt{2n}}$ comes from. In grh-compact the level has the opposite
+profile: it is built to carry many rings, and it pays for each of them a price that itself grows
+with their number.
+
+\begin{theorem}[\lean{Structural.level_arcs}, \lean{Structural.level_charge_per_arc}]
+Let $B=\lfloor b\rfloor$. For $1\le i\le m$, $\mathrm{arc}(N,B^i)>0$: the level carries $m$ rings
+of $B$. Each of these $m$ arcs is charged $4mfb\log b$, and
+$\sum_{i=1}^{m}4mfb\log b\le\mathrm{budget}$.
+\end{theorem}
+
+\noindent The count $m$ enters twice, as the number of arcs and in the price of each; the square
+law of the lever is this double count. In both certificates the exponent $1/2$ is the threshold
+at which a quantity is counted against itself. The scales are not the same: in grh-compact
+$\log x_1\ge10^6\log x$ and $\log b\ge10^6\log x_1$, so the window of the data is not the window
+$(P,P^2)$ of a prime base; what the two share is the square threshold, not the window.
+
+\section{The spine}\label{sec:spine}
+
+\begin{theorem}[One-sided bound, \lean{Structural.one_sided_bound}]\label{thm:onesided}
+For parameters $(N_0,d)$ and $0<\varepsilon<1/100$, eventually in $x$,
+$R_{N_0}(x)\le x^{8\varepsilon+1/2-1}$ (grh-compact's \lean{eventually_primeError_le_rpow}).
+\end{theorem}
+\begin{theorem}[\lean{Structural.no_zero_right_of_half}, \lean{Structural.zeros_on_line},
+\lean{Structural.zeta_zeros_on_line}]
+No Dirichlet $L$-function vanishes in $\operatorname{Re}s>1/2$ (the pole of the principal character
+at $s=1$ excepted); every zero with $0<\operatorname{Re}s<1$ lies on $\operatorname{Re}s=1/2$; and
+Mathlib's \lean{RiemannHypothesis} holds.
+\end{theorem}
+The first statement is grh-compact's \lean{New.grh}: Landau's lemma (\lean{Structural.landau_criterion})
+turns the one-sided bound on a sum with non-negative weights into a zero-free half-plane; a second
+scale is taken in a long window (\lean{Structural.second_scale_window}). The functional equation then
+folds $\operatorname{Re}s>1/2$ onto $\operatorname{Re}s<1/2$. The zeros do not enter the argument;
+they appear only in its last statement.
+
+\section{Weights of the steps}\label{sec:weights}
+
+The dependency graph of the built grh-compact, from the five theorems of \texttt{Main.lean}, has
+$37{,}569$ project constants ($11{,}852$ in \texttt{New}, $25{,}707$ in \texttt{Lib}). For each step,
+\emph{only} counts the constants that no other listed step needs.
+
+\begin{center}
+\begin{tabular}{p{9.5cm}rr}
+\toprule
+step & closure & only\\
+\midrule
+twists keeping denominators small (Selmer, \lean{exists_isFitFamily}) & 26{,}780 & 3{,}592\\
+one lift gains (\lean{heightLe_liftVolume_ratio}) & 30{,}633 & 1{,}358\\
+Theorem A, short forms & 17{,}975 & 1{,}111\\
+crude rows, one determinant & 13{,}994 & 536\\
+Landau and the quadratic twist & 238 & 118\\
+data at every $x$ & 4{,}672 & 76\\
+chain volume $=$ product of lift volumes & 23{,}214 & 32\\
+remainder as prime sums & 4{,}794 & 30\\
+window for the second scale & 95 & 20\\
+Theorem B, enough forms & 29{,}554 & 7\\
+product formula (\lean{HeightLe.nonneg}) & 25 & 5\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The two ends are light: the product formula and Landau's lemma. The weight is in building one object
+that is at once small (Theorem A) and free of unexpected divisibility (Galois representations and
+Selmer bounds keep the denominators of the twisted lifts small). Over $\mathbb Q$ the divisibility
+of $\binom{2n}{n}$ is free, by arcs; over the CM field it costs the Selmer bounds. That is the
+difference between Chebyshev's bounds and the critical line.
+
+\section{An application: primes in short intervals}\label{sec:short}
+
+The two theorems of this section are the statements submitted for review. They are stated in
+\texttt{Challenge.lean}, which imports only Mathlib, and proved in \texttt{Solution.lean}.
+
+\begin{theorem}[\lean{Submission.chebyshev_psi_error}]\label{thm:psi}
+For every $\delta>0$ there are $C$ and $x_0$ such that $|\psi(x)-x|\le C\,x^{1/2+\delta}$ for all
+$x\ge x_0$, where $\psi$ is Mathlib's \lean{Chebyshev.psi}.
+\end{theorem}
+
+\begin{theorem}[\lean{Submission.exists_prime_in_short_interval}]\label{thm:short}
+For every $\varepsilon>0$ there is $x_0$ such that for every real $x\ge x_0$ there is a prime $p$
+with $x<p\le x+x^{1/2+\varepsilon}$.
+\end{theorem}
+
+Both are classical consequences of the Riemann Hypothesis. Theorem~\ref{thm:psi} is the theorem of
+\S7 of von Koch \cite{vonKoch1901}: under RH, $(\psi(x)-x)/x$ tends to $0$ at least as fast as
+$x^{a-1/2}$ for every $a>0$, and $\theta$ differs from $\psi$ by $O(\sqrt x)$. In the last section
+of the same paper he sharpens this to $|\psi(x)-x|<B\sqrt x\log^2x$ and
+$|\pi(x)-\operatorname{li}(x)|<K\sqrt x\log x$. Theorem~\ref{thm:short} follows from the estimate
+of \S7 for $\theta$; the sharper gap bound $p_{n+1}-p_n=O(\sqrt{p_n}\log p_n)$ under RH is due to
+Cramér \cite{Cramer1920}. The sharper forms are not formalized here. What is new here is their proof in Lean from
+Mathlib's \lean{RiemannHypothesis}. The Riemann Hypothesis itself is the theorem
+\lean{New.zeta_zeros_on_line}~\lean{New.grh} of grh-compact (here \lean{Structural.zeta_zeros_on_line}),
+so in Lean the two theorems hold without hypotheses. In PrimeNumberTheoremAnd \cite{PNT} at commit
+\texttt{e990613}, RH-conditional prime-in-interval statements of this kind (Dudek 2015;
+Carneiro, Milinovich and Soundararajan 2019) are recorded as targets with \texttt{sorry}
+(\texttt{IEANTN/TMEEMT.lean}); none is proved there. A search of Mathlib at \texttt{56a00585} found
+no theorem with \lean{RiemannHypothesis} as a hypothesis. A negative search is not a proof that no
+formalization exists elsewhere.
+
+\paragraph{Proof.} The proof is a contour shift of the smoothed Chebyshev function of
+PrimeNumberTheoremAnd; its files are ported to the Mathlib of grh-compact with mechanical changes
+only (\texttt{PNTPort/}, listed in \texttt{PORTING.md}). Four steps are new.
+\begin{enumerate}
+\item (\lean{RHStructure.logDerivZeta_bound_of_RH}) Under RH, for every $\delta\in(0,1)$ there is
+$C$ with $|\zeta'/\zeta(\sigma+it)|\le C\log|t|$ for $\sigma\ge1/2+\delta$, $|t|\ge3$. On the disk of
+radius $1-\delta/2$ around $3/2+it$, $\zeta$ has no zeros (RH) and no pole, so it has a holomorphic
+logarithm $J$ with $J(0)=0$ and $\operatorname{Re}J\le\log(7+2|t|)+c$; the Borel--Carathéodory bound
+for $J'$ gives the estimate. Along a line $\operatorname{Re}s=\sigma_1\in(1/2,1)$ this gives
+$|\zeta'/\zeta|\le D(1+|t|)^{\eta}$ for every $\eta>0$
+(\lean{RHStructure.logDerivZeta_line_bound_of_RH}).
+\item (\lean{RHStructure.mellin_smooth1_interp}) The Mellin transform of the smoothed indicator
+satisfies $|\mathcal M(s)|\le A/|s|$ and $|\mathcal M(s)|\le B/(\varepsilon|s|^2)$ uniformly in
+$\varepsilon$ for $\sigma_1\le\operatorname{Re}s\le2$, hence
+$|\mathcal M(s)|\le K\varepsilon^{-\eta}|s|^{-(1+\eta)}$. The second bound alone, which is the one
+PrimeNumberTheoremAnd uses, loses a factor $1/\varepsilon$; with $\varepsilon=x^{-1/2}$ it would
+give only the exponent $3/4$.
+\item (\lean{RHStructure.chebyshev_psi_of_RH}) With $\varepsilon=X^{-1/2}$, height $T=X$ and the new
+line $\sigma_1=1/2+\delta/2$, the integral on the new line is at most $M X^{1/2+\delta}$
+(\lean{RHStructure.I37_bound}), the horizontal segments (\lean{RHStructure.I28_bound}), the tails of
+the old line and the smoothing are $O(X^{1/2}\log X)$. This is Theorem~\ref{thm:psi}.
+\item (\lean{RHStructure.exists_prime_short_interval_of_RH}) With $\psi-\theta=O(\sqrt x)$
+(Mathlib) and $h=x^{1/2+\varepsilon}$, $\theta(x+h)-\theta(x)\ge h-Kx^{1/2+\varepsilon/2}>0$ for
+large $x$, so a prime lies in $(x,x+h]$. This is Theorem~\ref{thm:short}.
+\end{enumerate}
+
+\paragraph{The Structural Window.} In the author's Structural Window the width laws
+$\lceil A^\theta\rceil$ carry certificates that enter as citations, the sharpest at $\theta=0.52$.
+\texttt{Applications/StructuralWindow.lean} restates its window definitions and proves, for every
+$\theta>1/2$: every large window $(A,A+\lceil A^\theta\rceil]$ has a void
+(\lean{StructuralWindow.gapCertificate_eventually_of_RH}); so does every window of width between
+$\lceil A^\theta\rceil$ and $A$ (\lean{StructuralWindow.generalLaw_partial}); after a large prime
+$p$ the next prime is at most $\lceil p^\theta\rceil$ further
+(\lean{StructuralWindow.nextPrime_gap_of_RH}); and the window moved forward by its own width,
+$A_{k+1}=A_k+\lceil A_k^\theta\rceil$, contains a prime at every step from some step on
+(\lean{StructuralWindow.march}). The question of the general law is how far the window must move
+so that the active base cannot cover it; the exponent $1/2$ that grh-compact sets is the edge of
+the moves this gives.
+
+\paragraph{Relation to Section~\ref{sec:lever}.} The exponent $1/2$ appears in this application as
+the line to which the contour can be moved, that is, as the output of grh-compact. The lever of
+Section~\ref{sec:lever} is where the proof of grh-compact sets that line; the application uses it
+and adds nothing to it.
+
+\section{What this note does not claim}
+
+\begin{itemize}
+\item It does not prove the Riemann Hypothesis; the proof is Alpöge's (with Claude), in the
+rewriting of Sernau and colleagues (with Claude).
+\item It shows where $1/2$ is set in this proof. It does not show that every proof must meet the
+same edge; a different choice of level might avoid the double charge.
+\item The heuristic that the Riemann Hypothesis is a square-root law is old (cancellation as in a
+random walk). What is stated here is the mechanism that produces the square root in this proof.
+\item The weights of Section~\ref{sec:weights} depend on how grh-compact factors its argument.
+\end{itemize}
+
+\appendix
+\section{Reproducibility}
+
+grh-compact at the commit above builds in 36 minutes on the author's PC (Lean v4.35.0) and its five
+theorems print only \lean{propext}, \lean{Classical.choice}, \lean{Quot.sound}. The files
+\texttt{Structural/Arcs.lean}, \texttt{Certificate.lean}, \texttt{Lever.lean},
+\texttt{Spine.lean} are added as a library on top of it without changing it; all their theorems
+print the same three axioms. The repository is a standalone Lake project that requires
+grh-compact at the commit above; \texttt{PNTPort/} holds the ported files of PrimeNumberTheoremAnd
+and \texttt{Applications/} the four steps of Section~\ref{sec:short}, whose theorems print the
+same three axioms. The experiment of Section~\ref{sec:lever} is the script
+\texttt{patch\_theta\_v3.py} applied to a copy, with $\theta=2/5$ and $3/5$.
+
+\paragraph{Writing.} The Lean files and this text were written with Claude (Anthropic) under the
+author's direction; the author ran every build.
+
+\begin{thebibliography}{9}
+\bibitem{vonKoch1901} H. von Koch, Sur la distribution des nombres premiers, Acta Math. 24 (1901),
+159--182, \url{https://doi.org/10.1007/BF02403071}.
+\bibitem{Cramer1920} H. Cramér, Some theorems concerning prime numbers, Arkiv för Mat., Astr. och
+Fys. 15 (1920), no.~5.
+\bibitem{PNT} A. Kontorovich, T. Tao et al., PrimeNumberTheoremAnd,
+\url{https://github.com/AlexKontorovich/PrimeNumberTheoremAnd}, commit \texttt{e9906138410f}.
+\end{thebibliography}
+
+\end{document}

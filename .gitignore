@@ -1,0 +1,38 @@
+# Lake / Lean build artifacts
+/.lake/
+*.olean
+*.ilean
+*.trace
+*.log
+
+# LaTeX build intermediates (sources and final PDFs are kept)
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.bbl
+paper/*.blg
+paper/*.toc
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
+
+# Editor / OS
+.DS_Store
+*.swp
+.vscode/
+.idea/
+
+# Local working files, never committed
+/PLAN.md
+/SESSION_STATE.md
+/CLAUDE.md
+/scripts/palomar_preflight.sh
+/preflight.log
+/.cache/
+/.venv-editorial/
+/vendor/
+/tokens_ssto.yaml
+/wsl-final-build.sh
+/final_build.log
+/build_full.log
+/build_errors.txt

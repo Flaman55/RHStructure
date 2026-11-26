@@ -1,0 +1,233 @@
+version: "v0.4"
+
+license: "Apache-2.0"
+
+project:
+  name: "RHStructure: primes in short intervals from the Lean proof of the Riemann Hypothesis"
+  description: >
+    The central contribution is a Lean 4 / Mathlib deduction, from Mathlib's
+    `RiemannHypothesis`, of two classical consequences of the Riemann Hypothesis: for every
+    delta > 0, |psi(x) - x| <= C x^(1/2 + delta) for all large x (`Submission.chebyshev_psi_error`,
+    psi being Mathlib's `Chebyshev.psi`), and for every epsilon > 0 and all large x a prime in
+    (x, x + x^(1/2 + epsilon)] (`Submission.exists_prime_in_short_interval`). Both statements are
+    known under RH: the first is the theorem of section 7 of H. von Koch (1901), who also proves
+    the sharper sqrt(x) log^2 x, and the second follows from it (Cramer's sharper gap bound is cited
+    in the note on that source); this work does not claim them as new mathematics. The Riemann
+    Hypothesis is not a result of this work: it is the theorem `New.zeta_zeros_on_line New.grh` of
+    grh-compact (Luke Sernau and colleagues at Anthropic, with Claude), a rewriting of the Lean
+    proof of RH and GRH by Levent Alpoge, with Claude, used here unchanged as a pinned Lake
+    dependency. With it the two statements hold in Lean without hypotheses, and `Challenge.lean`
+    states them so. The deduction is a contour shift of the smoothed Chebyshev function of
+    PrimeNumberTheoremAnd (whose files are ported to grh-compact's Mathlib with mechanical changes,
+    `PNTPort/`) to the line Re s = 1/2 + delta, with two new estimates: zeta'/zeta << log|t| to the
+    right of 1/2 under RH (Borel-Caratheodory on a holomorphic logarithm of zeta), and an
+    interpolated bound on the Mellin transform of the smoothing that keeps the exponent 1/2 (the
+    bound used in PrimeNumberTheoremAnd alone would give 3/4). The accompanying note
+    (`paper/why_one_half.tex`) also explains, with Lean theorems in `Structural/` that are not
+    advertised, where the proof of grh-compact sets the exponent 1/2. Zero sorries; the advertised
+    theorems depend only on the three standard Lean axioms.
+  authors: ["Artur Flamandzki"]
+  license: "Apache-2.0"
+  responsible_maintainers: ["Artur Flamandzki"]
+  repository_role: >
+    Substantive development: this repository contains the Lean deduction (`Applications/`), the
+    ported files it uses (`PNTPort/`), the structural reading (`Structural/`) and the accompanying
+    note. grh-compact is fetched by Lake at the pinned commit and is not redistributed.
+
+classification:
+  arxiv: ["math.NT"]
+  msc2020: ["11N05", "11M26"]
+
+sources:
+  - title: "grh-lean, compact edition: the Generalized Riemann Hypothesis for Dirichlet L-functions, in Lean 4"
+    authors: ["Luke Sernau and colleagues at Anthropic, with Claude"]
+    id: "https://github.com/lsernau/grh-lean/tree/72fead102f663d5c7a407964a13dc0cf9d977207/grh-compact"
+    type: "software"
+    location: "src/Main.lean (`riemannHypothesis`, `New.zeta_zeros_on_line`, `New.grh`), src/Statements.lean, README.md"
+    author_endorsement: "not-contacted"
+    relationship: "other"
+    note: >
+      Lean 4 project (Apache-2.0, Copyright 2026 Anthropic, PBC), commit 72fead1, Lean v4.35.0,
+      Mathlib 56a005855ea1. It proves Mathlib's `RiemannHypothesis` and GRH for Dirichlet
+      L-functions with only the three standard axioms. This repository depends on it unchanged as
+      a Lake package and uses exactly one of its theorems, the Riemann Hypothesis
+      (`Structural.zeta_zeros_on_line := New.zeta_zeros_on_line New.grh`), as the hypothesis of the
+      deduction in `Applications/`. It does not state or prove the advertised results. Intended
+      audience: analytic number theorists and the formal verification community.
+  - title: "Lean proof of the Riemann Hypothesis and of GRH for Dirichlet L-functions (remark)"
+    authors: ["Levent Alpoge"]
+    id: "https://alpo.ge/remark.pdf"
+    type: "paper"
+    location: "whole note"
+    author_endorsement: "not-contacted"
+    relationship: "other"
+    note: >
+      Announcement of the Lean proof of RH and GRH, written with Claude, of which grh-compact is a
+      rewriting. The proof is Alpoge's; this repository uses it only through grh-compact. It does
+      not state or prove the advertised results.
+  - title: "PrimeNumberTheoremAnd"
+    authors: ["Alex Kontorovich", "Terence Tao", "and contributors"]
+    id: "https://github.com/AlexKontorovich/PrimeNumberTheoremAnd/tree/e9906138410f8f76ca66b9bc252d0993f3ee348c"
+    type: "software"
+    location: "MediumPNT.lean (SmoothedChebyshev, SmoothedChebyshevPull1, SmoothedChebyshevClose, I1Bound, I9Bound, MellinOfSmooth1cExplicit), MellinCalculus.lean (Smooth1, MellinOfSmooth1a, MellinOfSmooth1b), StrongPNT.lean (LogOfAnalyticFunction', BorelCaratheodoryDeriv, GlobalBound, ZetaFixedLowerBound, LogDerivZetaBdd_of_Re_ge_three_halves), IEANTN/TMEEMT.lean"
+    author_endorsement: "not-contacted"
+    relationship: "adapts"
+    note: >
+      Lean 4 project (Apache-2.0), commit e990613 of 2026-11-24, Lean v4.36.0. Fourteen of its
+      files (the import closure of MediumPNT, plus StrongPNT) are copied into `PNTPort/` and
+      ported to Lean v4.35.0 and Mathlib 56a005855ea1 with mechanical changes listed in
+      `PORTING.md` (blueprint attributes removed, module paths renamed, three lemma names of the
+      older Mathlib); their copyright headers are kept. Its smoothed Chebyshev function, contour
+      shift and Borel-Caratheodory lemmas are used here. Its main theorems (MediumPNT, StrongPNT)
+      use zero-free regions of the form Re s >= 1 - A/log^n |t| and give error terms of the form
+      x exp(-c (log x)^(1/(1+n))); the Riemann Hypothesis is not used there. In
+      `IEANTN/TMEEMT.lean` it records RH-conditional prime-in-interval statements (Dudek 2015;
+      Carneiro, Milinovich and Soundararajan 2019; and a 2002 bound) as targets with `sorry`; none
+      of them is proved there. Intended audience: the formalization community in analytic number
+      theory.
+  - title: "Sur la distribution des nombres premiers"
+    authors: ["Helge von Koch"]
+    id: "doi:10.1007/BF02403071"
+    type: "paper"
+    location: "Acta Math. 24 (1901), 159-182; section 7 (theorem with formula (55)) and the final section"
+    author_endorsement: "n/a"
+    relationship: "formalizes"
+    note: >
+      Version read: the scan on Zenodo (record 2347595), sections 7 and the final section. In
+      section 7 von Koch proves that under RH the difference psi(x) - x, divided by x, tends to 0
+      at least as fast as x^(a - 1/2) for every a > 0, and notes that theta(x) differs from psi(x)
+      by O(sqrt x); this is the form of `Submission.chebyshev_psi_error`. In the final section,
+      using de la Vallee Poussin's bound on the zeros, he sharpens it to
+      |psi(x) - x| < B sqrt(x) (log x)^2 and |F(x) - Li(x)| < K sqrt(x) log x. The
+      short-interval statement `Submission.exists_prime_in_short_interval` is a direct consequence
+      of the section 7 estimate for theta; the stronger gap bound
+      p_(n+1) - p_n = O(sqrt(p_n) log p_n) under RH is due to H. Cramer (1920), cited for example
+      in arXiv:1804.02500, Theorem 4, and not read for this work. The proof here is a different
+      route (a smoothed contour shift, not von Koch's discontinuity factor and sum over zeros) and
+      carries no RH hypothesis because RH is a theorem of grh-compact. Intended audience:
+      analytic number theorists.
+
+status:
+  scope: >
+    Two declarations are submitted for Comparator review (see comparator.json). They are stated
+    in Challenge.lean, which imports only Mathlib and has no definitions, and proved in
+    Solution.lean from `RHStructure.chebyshev_psi_of_RH` and
+    `RHStructure.exists_prime_short_interval_of_RH`, applied to `Structural.zeta_zeros_on_line`
+    (grh-compact's Riemann Hypothesis).
+
+    `chebyshev_psi_of_RH` (Applications/RHPsi.lean): PrimeNumberTheoremAnd's
+    `SmoothedChebyshevPull1` moves the line of the smoothed Chebyshev integral from
+    Re s = 1 + 1/log X to sigma_1 = 1/2 + delta'/2 at height T; under RH the integrand is
+    holomorphic there except at s = 1, whose residue gives the main term. With epsilon = X^(-1/2)
+    and T = X: the integral on the new line is at most M epsilon^(-eta) X^(sigma_1) =
+    M X^(1/2 + delta') (`I37_bound`, from `logDerivZeta_line_bound_of_RH` and
+    `mellin_smooth1_interp`); the horizontal segments are at most M log T (epsilon T^2)^(-1) X^2
+    (`I28_bound`); the tails of the old line (`I1Bound`, `I9Bound`), the Mellin transform at 1
+    (`MellinOfSmooth1cExplicit`) and the smoothing (`SmoothedChebyshevClose`) cost
+    O(X^(1/2) log X).
+
+    `logDerivZeta_bound_of_RH` (Applications/RHLogDeriv.lean): on the disk of radius 1 - delta/2
+    around 3/2 + it, zeta has no zero (RH) and no pole, so it has a holomorphic logarithm J with
+    J(0) = 0 (`LogOfAnalyticFunction'`) and Re J <= log(7 + 2|t|) + c (`GlobalBound`,
+    `ZetaFixedLowerBound`); `BorelCaratheodoryDeriv` gives |zeta'/zeta| = |J'| <= C log|t| for
+    sigma >= 1/2 + delta, |t| >= 3.
+
+    `mellin_smooth1_interp` (Applications/RHMellin.lean): from Mellin(Smooth1)(s) =
+    s^(-1) Mellin(nu)(epsilon s) and the boundedness of Mellin(nu) on 0 <= Re w <= 2, a bound
+    A/|s| uniform in epsilon; with `MellinOfSmooth1b`, B/(epsilon |s|^2); interpolating,
+    K epsilon^(-eta) |s|^(-(1 + eta)).
+
+    `exists_prime_short_interval_of_RH` (Applications/ShortInterval.lean): with
+    psi - theta = O(sqrt x) (Mathlib's `Chebyshev.psi_sub_theta_le_mul_sqrt`) and
+    h = x^(1/2 + epsilon), theta(x + h) - theta(x) >= h - K x^(1/2 + epsilon/2) > 0 for large x.
+
+    Not advertised: the Lean files of `Structural/` (the structural reading of grh-compact in the
+    accompanying note: remainder as excess turns, the certificate, the lever m^2 4b <= a (log b)^2)
+    and the theorems of `Applications/` other than the two above, including
+    `Applications/StructuralWindow.lean` (the window certificates of the author's Structural
+    Window for every exponent theta > 1/2, the general law on ceil(A^theta) <= W <= A, the
+    gap to the next prime and the marching windows).
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext", "Classical.choice", "Quot.sound"]
+  main_results:
+    - declaration: "Submission.chebyshev_psi_error"
+      file: "Challenge.lean / Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+      literature_dependencies: []
+    - declaration: "Submission.exists_prime_in_short_interval"
+      file: "Challenge.lean / Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+      literature_dependencies: []
+
+automation:
+  methods:
+    - method: "agent"
+      models: ["claude-opus-5-5"]
+      framework: "Claude (claude.ai agent with a bridge to the author's computer)"
+      tool_setup: >
+        November 2026 sessions, directed by the author. The agent wrote the Lean files of
+        `Structural/` and `Applications/`, `Challenge.lean`, `Solution.lean`, the porting script
+        and the ported files of `PNTPort/`, this file, the README and the note. The agent had no
+        Lean toolchain: every build was run by the author on his computer (WSL, Lean v4.35.0) and
+        its log returned to the agent, which corrected the sources until the builds succeeded.
+        The mathematical route of the application (contour shift to Re s = 1/2 + delta,
+        Borel-Caratheodory for zeta'/zeta under RH, interpolated Mellin bound) was proposed by the
+        agent and agreed by the author; the choice of the advertised surface and of the
+        structural reading is the author's.
+      cost:
+        wall_time: "about two hours for the application (four steps), 26 November 2026"
+        spend_usd: "not tracked (subscription-based usage)"
+        hardware: "author's computer"
+      prompting_notes: >
+        The agent translated the agreed steps into Lean and repaired build failures; correctness
+        is decided by the Lean kernel and the axiom audit.
+  spend_usd: "not tracked (subscription-based usage)"
+  notes: >
+    Lean source and prose were written by an agent under the author's direction; all builds were
+    run and checked by the author.
+
+fidelity:
+  divergences: >
+    (a) The advertised psi statement is the form of von Koch's section 7 (x^delta for every
+    delta > 0); his final section and Cramer's gap bound have logarithmic factors instead and are
+    sharper; the sharper forms are not formalized here. (b) The statements are eventual (for x >= x_0) with constants that are
+    not made explicit. (c) `Chebyshev.psi x` is Mathlib's sum of Lambda(n) over 0 < n <= floor x;
+    `x ^ (1/2 + delta)` is `Real.rpow`, applied only to x >= x_0, and x_0 >= 1 can always be
+    assumed, so no rpow of a negative number is reached. (d) The prime statement gives x < p and
+    p <= x + x^(1/2 + epsilon) for real x; it is stated for real, not only integer, x. (e) The
+    Riemann Hypothesis enters as Mathlib's `RiemannHypothesis`, proved in grh-compact; the
+    statements in Challenge.lean carry no hypothesis.
+
+review:
+  status: "self-assessed"
+  reviewers: ["Artur Flamandzki"]
+  notes: >
+    The author directed the work and ran and checked every Lean build, but did not read the
+    agent-written Lean source line by line. The two advertised statements are short and are meant
+    to be read directly; their proofs are checked by the Lean kernel and by Comparator's axiom
+    audit.
+
+alignment:
+  namespace: "RHStructure"
+  statements:
+    - source: "Note, Theorem (psi error term), Section 'An application: primes in short intervals'"
+      lean: "Submission.chebyshev_psi_error / RHStructure.chebyshev_psi_of_RH"
+      module: "Challenge.lean, Solution.lean, Applications/RHPsi.lean"
+      status: "proved"
+      note: "Von Koch 1901, section 7; see fidelity (a)."
+    - source: "Note, Theorem (primes in short intervals), same section"
+      lean: "Submission.exists_prime_in_short_interval / RHStructure.exists_prime_short_interval_of_RH"
+      module: "Challenge.lean, Solution.lean, Applications/ShortInterval.lean"
+      status: "proved"
+      note: "Consequence of von Koch 1901, section 7, for theta; see fidelity (a)."
+
+acknowledgements: >
+  The Riemann Hypothesis used here is proved by Levent Alpoge (with Claude), in the rewriting
+  grh-compact by Luke Sernau and colleagues at Anthropic (with Claude). The smoothed Chebyshev
+  function, the contour shift and the Borel-Caratheodory lemmas come from PrimeNumberTheoremAnd
+  (A. Kontorovich, T. Tao and contributors).
