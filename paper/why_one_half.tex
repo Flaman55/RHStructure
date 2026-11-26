@@ -320,16 +320,18 @@ difference between Chebyshev's bounds and the critical line.
 
 \section{An application: primes in short intervals}\label{sec:short}
 
-The two theorems of this section are the statements submitted for review. They are stated in
-\texttt{Challenge.lean}, which imports only Mathlib, and proved in \texttt{Solution.lean}.
+The two theorems of this section assume Mathlib's \lean{RiemannHypothesis}. They are proved in
+the repository RHShortIntervals (\url{https://github.com/Flaman55/RHShortIntervals}), which depends
+only on Mathlib and is the version submitted for review; this repository applies them to the
+theorem of grh-compact.
 
-\begin{theorem}[\lean{Submission.chebyshev_psi_error}]\label{thm:psi}
-For every $\delta>0$ there are $C$ and $x_0$ such that $|\psi(x)-x|\le C\,x^{1/2+\delta}$ for all
+\begin{theorem}[\lean{Submission.chebyshev_psi_error_of_RH}]\label{thm:psi}
+Assume the Riemann Hypothesis. For every $\delta>0$ there are $C$ and $x_0$ such that $|\psi(x)-x|\le C\,x^{1/2+\delta}$ for all
 $x\ge x_0$, where $\psi$ is Mathlib's \lean{Chebyshev.psi}.
 \end{theorem}
 
-\begin{theorem}[\lean{Submission.exists_prime_in_short_interval}]\label{thm:short}
-For every $\varepsilon>0$ there is $x_0$ such that for every real $x\ge x_0$ there is a prime $p$
+\begin{theorem}[\lean{Submission.exists_prime_in_short_interval_of_RH}]\label{thm:short}
+Assume the Riemann Hypothesis. For every $\varepsilon>0$ there is $x_0$ such that for every real $x\ge x_0$ there is a prime $p$
 with $x<p\le x+x^{1/2+\varepsilon}$.
 \end{theorem}
 
@@ -342,7 +344,8 @@ of \S7 for $\theta$; the sharper gap bound $p_{n+1}-p_n=O(\sqrt{p_n}\log p_n)$ u
 Cramér \cite{Cramer1920}. The sharper forms are not formalized here. What is new here is their proof in Lean from
 Mathlib's \lean{RiemannHypothesis}. The Riemann Hypothesis itself is the theorem
 \lean{New.zeta_zeros_on_line}~\lean{New.grh} of grh-compact (here \lean{Structural.zeta_zeros_on_line}),
-so in Lean the two theorems hold without hypotheses. In PrimeNumberTheoremAnd \cite{PNT} at commit
+so in this repository the two theorems hold in Lean without hypotheses
+(\lean{Submission.chebyshev_psi_error}, \lean{Submission.exists_prime_in_short_interval}). In PrimeNumberTheoremAnd \cite{PNT} at commit
 \texttt{e990613}, RH-conditional prime-in-interval statements of this kind (Dudek 2015;
 Carneiro, Milinovich and Soundararajan 2019) are recorded as targets with \texttt{sorry}
 (\texttt{IEANTN/TMEEMT.lean}); none is proved there. A search of Mathlib at \texttt{56a00585} found
