@@ -176,3 +176,30 @@ The 2/3 needs the pair terms at the level N itself: the extra factor m comes fro
 log N ≥ m log b, not from the size b. Pair terms on floor b would leave the edge at 1/2.
 The open computation is therefore whether, without the twists, the exchange constants of the
 triangle carry N-adic denominators (not just large size).
+
+## Step 5 (2026-11-27): the cost at N is a power of N given by the weight
+
+Sources: monograph of Euler2023/grh-blueprint, Section 3.4 "The level prime and uniform local
+losses" (readable edition, Lean links there); grh-compact 72fead1 Data/AdmissibleData,
+Data/Weights, Columns/TwistedHeckeType.
+
+- Gluing factor of double step i at N (monograph Lemma "Determinant character factors in the
+  gluing basis change"; compact `Data.norm_detCharAt_diagN_le`): |Δ_{ϑ,i}|_ι ≤ N^(2fb). The
+  exponent is the weight: at each infinite place the factor is a power of N given by the weight,
+  and the weight of step j is at most 2b (`w_le_two_mul_b`).
+- The weights grow along the chain: w_j(σ) = (b₁ or b₂) + j·h + h₂ with gap h = 2r⁸ ~ x^40
+  (`Data.h`, `Data.h₂`), and over 2m steps the drift is ≤ x^42 (`w_le_nominalWeight_add`). The
+  growth with j, the "pay for the state" part of the weight, lives on floor x.
+- Colength at N: iterating the raising operator m/2 times costs N^(s_N (m/2+1)) with
+  k s_N ≤ u₀ f a, hence c_N ≤ m f b u₀ (monograph Lemma "Colength of the full integral source
+  module at the level prime"): linear in m.
+
+Second candidate for the 2/3 (besides the triangle of Step 3): if the weight grew by an amount of
+order b per lift (w_j ~ j b instead of b + j x^40), the N-adic gluing factors would be
+N^(f b j), the total exponent at N about f b m², and with log N ≥ m log b the lever gives
+m³ ≲ x, the edge 2/3 (`notes/floors.py`, floor N). The proof keeps the gap h on floor x:
+h ≥ t (`reducedHalfGap = h₂ − ⌊(t+1)/2⌋`, needed at the real place, monograph Chapter 8
+"Large-gap discrete series") and h·2m ≤ x^42 ≪ b.
+
+Both candidates have the same shape: a quantity that grows along the chain (pair terms, weights)
+is pinned to floor x, so only the per-lift part (floor b) is charged at N.
