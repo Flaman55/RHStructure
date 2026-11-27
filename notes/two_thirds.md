@@ -161,3 +161,18 @@ Refined hypothesis: without the twists, the Hecke-value ratios at the squares of
 not bounded by x^999 (ℓ-adic divisibility of L-values is uncontrolled), the pair terms leave floor
 x, and charged like the increments they give m³ ≲ x, the edge 2/3. This matches the remark's
 "kill via twisting". Still a hypothesis: it needs the untwisted height of one square.
+
+## Step 4 (2026-11-27): which floor gives 2/3 (`notes/floors.py`)
+
+Exponent bookkeeping, pair terms placed on one floor at a time:
+
+| floor of the ~m² pair terms | max θ | edge |
+|---|---|---|
+| x (each square x^999, the twisted case) | 1/2 | 1/2 |
+| b (each pair costs like f b) | 1/2 | 1/2 |
+| N (f b weighted by log N ≥ m log b) | 1/3 | 2/3 |
+
+The 2/3 needs the pair terms at the level N itself: the extra factor m comes from the weight
+log N ≥ m log b, not from the size b. Pair terms on floor b would leave the edge at 1/2.
+The open computation is therefore whether, without the twists, the exchange constants of the
+triangle carry N-adic denominators (not just large size).
