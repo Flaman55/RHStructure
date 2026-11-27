@@ -203,3 +203,21 @@ h ≥ t (`reducedHalfGap = h₂ − ⌊(t+1)/2⌋`, needed at the real place, mo
 
 Both candidates have the same shape: a quantity that grows along the chain (pair terms, weights)
 is pinned to floor x, so only the per-lift part (floor b) is charged at N.
+
+## Step 6 (2026-11-27): the weight gap is set by the rank, not by b
+
+Monograph Chapter 8, Definition "Doubled parameters and large gaps" (Lean
+src/Lib/DiscreteSeries/FlenstedJensen/Defs.lean): the lower bound for the period at the real
+place needs |λ_i − λ_j| ≥ 500 n³ + h between parameters of opposite sign, n the rank. Chapter 6
+uses this as the weight gap 500n³ + 8n_*. In grh-compact h₂ = r⁸ ~ x^40 meets it with room.
+
+So the gap is forced up only to rank scale (floor x), and nothing pushes it to floor b: the
+weight candidate of Step 5 does not arise from the real place. Both growth terms found so far
+(the triangle of pair terms, the drift of the weights) sit on floor x for structural reasons,
+and become negligible because b is chosen astronomically above x (x₁ ≥ x^(10^6), b ≥ x₁^(10^6)).
+If the floors collapsed (b = x^O(1)), these terms would swamp the saving entirely; that gives no
+zero-free region, not 2/3.
+
+Status: neither candidate yet reproduces "2/3 a priori". The remark gives no computation, and
+grh-compact contains only the final construction. The most direct source for the 2/3 is the
+author of the computation.
