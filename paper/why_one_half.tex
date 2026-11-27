@@ -22,7 +22,7 @@
 Stepanov's balance in rings and arcs,\\
 and where the exponent $1/2$ is set}
 \author{Artur Flamandzki}
-\date{26 November 2026}
+\date{26 November 2026 (Zenodo v1, \href{https://doi.org/10.5281/zenodo.24572321}{10.5281/zenodo.24572321})\\ revised 28 November 2026: Section~\ref{sec:original} added}
 
 \begin{document}
 \maketitle
@@ -64,6 +64,11 @@ three open questions, among them the cost that would stop the method at $2/3$ wi
 \item \textbf{The proof.} Levent Alpöge, with Claude: a Lean~4 proof of the Riemann Hypothesis and
 of the Generalized Riemann Hypothesis for Dirichlet $L$-functions, announced in November 2026
 (\url{https://alpo.ge/remark.pdf}).
+\item \textbf{The original archive.} The analysis of which parts of the proof carry the argument
+was done first on the original Lean archive, as mirrored by the Lean community
+(\url{https://github.com/leanprover-community/riemann-hypothesis}, commit
+\texttt{6b1e1b8e9d683841024757f158fda63a32bbeae7}, Lean v4.33.1), before the compact rewriting
+existed (Section~\ref{sec:original}).
 \item \textbf{The rewriting used here.} Luke Sernau and colleagues at Anthropic, with Claude:
 \emph{grh-lean}, compact edition (\url{https://github.com/lsernau/grh-lean}, folder
 \texttt{grh-compact}, commit \texttt{72fead102f663d5c7a407964a13dc0cf9d977207}), Lean v4.35.0,
@@ -81,6 +86,46 @@ change nothing in it. Each theorem below names the Lean declaration that states 
 
 The contribution is an answer to two questions about this proof: why it succeeds, and why it gives
 exactly $1/2$. It is not a claim to have proved the Riemann Hypothesis.
+
+\section{The original proof: what the headline theorems use}\label{sec:original}
+
+The reading began on the original archive, about $17.4$ million lines of Lean. Its five headline
+theorems (\lean{riemannHypothesis} and four statements about zeros of $\zeta$ and of Dirichlet
+$L$-functions) were taken as roots, and every constant used in their types and values was walked,
+on the built archive, by a declaration-level dependency walk
+(\texttt{scripts/original/DepGraph.lean}). The original states the published results it relies on
+as interface theorems (in \texttt{UpperTheory.LiteratureTheorems}) and proves them inside the
+archive. Stopping the walk at these interfaces separates the \emph{spine}, the argument proper, from
+the \emph{literature layer} that proves the published results
+(\texttt{scripts/original/layers.py}).
+
+\begin{center}
+\begin{tabular}{lr}
+\toprule
+original archive & count\\
+\midrule
+files & $175{,}187$\\
+lines & $17{,}374{,}215$\\
+project constants & $1{,}847{,}691$\\
+reachable from the five headline theorems & $1{,}265{,}279$\\
+\quad spine (reachable without expanding the $264$ interfaces) & $400{,}050$\\
+\quad literature only (reachable only through the interfaces) & $865{,}229$\\
+not reachable from the headline theorems & $582{,}412$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Two facts from this walk shaped the rest of the note. First, about two thirds of what the headline
+theorems use is proof of published background, not the new argument; one interface,
+\lean{every_character_of_literature_of_vWin}, alone pulls $865{,}205$ constants outside the spine.
+Second, the argument proper is a small part of the archive; grh-compact, a rewriting that
+follows the same method, keeps that argument and proves the background it needs in its
+\texttt{Lib}, in the forms the argument uses. A declaration-level reduction of the original to its spine was attempted on
+the author's machine and did not complete: the import graph of the archive does not reflect its
+real dependencies, and pruned builds failed. When grh-compact appeared, with $37{,}569$ reachable
+project constants (Section~\ref{sec:weights}) and five headline theorems on the same three
+axioms, the readings below were stated on it, because there each step is a named Lean declaration
+that a reader can open.
 
 \section{Tools from the author's earlier work}\label{sec:tools}
 
@@ -604,7 +649,7 @@ it; all their theorems print the same three axioms. After \texttt{lake build}, t
 grh-compact at the commit above; \texttt{PNTPort/} holds the ported files of PrimeNumberTheoremAnd
 and \texttt{Applications/} the four steps of Section~\ref{sec:short}, whose theorems print the
 same three axioms. The experiment of Section~\ref{sec:lever} is the script
-\texttt{scripts/lever/patch\_theta\_v3.py} applied to a copy, with $\theta=2/5$ and $3/5$. The weights of Section~\ref{sec:weights} come from \texttt{scripts/weights} (a dependency walk of the built grh-compact and a closure count).
+\texttt{scripts/lever/patch\_theta\_v3.py} applied to a copy, with $\theta=2/5$ and $3/5$. The measurements of the original archive (Section~\ref{sec:original}) come from \texttt{scripts/original}. The weights of Section~\ref{sec:weights} come from \texttt{scripts/weights} (a dependency walk of the built grh-compact and a closure count).
 
 \paragraph{Writing.} The Lean files and this text were written with Claude (Anthropic) under the
 author's direction; the author ran every build.

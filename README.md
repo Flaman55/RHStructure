@@ -7,6 +7,15 @@ Paper: *Why the Lean proof of the Riemann Hypothesis works: Stepanov's balance i
 and where the exponent 1/2 is set*, Zenodo, https://doi.org/10.5281/zenodo.24572321 (source in
 `paper/`).
 
+Versions of the paper:
+
+- Zenodo v1 (26 November 2026) is the PDF of commit `4abbeff` (md5 `2d1eceb828797411d511cf8489022a24`).
+- The current `paper/` on GitHub (28 November 2026) adds Section 2, the analysis of the original
+  Lean archive (leanprover-community/riemann-hypothesis, commit `6b1e1b8e`): the dependency walk
+  from the five headline theorems and the split into the argument and the literature layer, with
+  scripts and measurements in `scripts/original/`. The mathematical content is unchanged; this
+  revision is not yet on Zenodo.
+
 The RH-conditional versions of the short-interval theorems are registered on Palomar as
 `PALOMAR-2026-11-26-000056` (version 1), from https://github.com/Flaman55/RHShortIntervals at
 commit `f9269d3`.

@@ -1,0 +1,11 @@
+roots_in_Main	5
+reachable_constants	1478243
+reachable_project	1265279
+reachable_external	212964
+project_constants_total	1847691
+project_unreachable	582412
+project_modules_total	164280
+project_modules_with_reachable	146443
+project_internal_edges	14084118
+seconds_load	1129
+seconds_walk	2485

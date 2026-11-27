@@ -1,0 +1,15 @@
+{
+ "nodes_in_edge_graph": 1265279,
+ "roots": [
+  "riemannHypothesis",
+  "riemannZeta_eq_zero_re",
+  "LFunction_ne_zero_of_half_lt_re",
+  "LFunction_eq_zero_re",
+  "LFunction_eq_zero_re_of_isPrimitive"
+ ],
+ "interfaces": 264,
+ "reach": 1265279,
+ "spine": 400050,
+ "literature_only": 865229,
+ "spine_shared_with_literature": 193577
+}
