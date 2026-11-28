@@ -13,8 +13,9 @@ Versions of the paper:
 - The current `paper/` on GitHub (28 November 2026) adds Section 2, the analysis of the original
   Lean archive (leanprover-community/riemann-hypothesis, commit `6b1e1b8e`): the dependency walk
   from the five headline theorems and the split into the argument and the literature layer, with
-  scripts and measurements in `scripts/original/`. The mathematical content is unchanged; this
-  revision is not yet on Zenodo.
+  scripts and measurements in `scripts/original/`, and two lemmas in `Structural/RingsPadic.lean`
+  (shared markers on the rings of ℓ measure ℓ-adic closeness; a twist's offsets are frozen on all
+  rings of ℓ). The results of the note are unchanged; this revision is not yet on Zenodo.
 
 The RH-conditional versions of the short-interval theorems are registered on Palomar as
 `PALOMAR-2026-11-26-000056` (version 1), from https://github.com/Flaman55/RHShortIntervals at

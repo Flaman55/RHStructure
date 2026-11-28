@@ -22,7 +22,7 @@
 Stepanov's balance in rings and arcs,\\
 and where the exponent $1/2$ is set}
 \author{Artur Flamandzki}
-\date{26 November 2026 (Zenodo v1, \href{https://doi.org/10.5281/zenodo.24572321}{10.5281/zenodo.24572321})\\ revised 28 November 2026: Section~\ref{sec:original} added}
+\date{26 November 2026 (Zenodo v1, \href{https://doi.org/10.5281/zenodo.24572321}{10.5281/zenodo.24572321})\\ revised 28 November 2026: Section~\ref{sec:original}, rings as the $\ell$-adic metric}
 
 \begin{document}
 \maketitle
@@ -223,10 +223,13 @@ arc of $N$ on $p$ & $\lfloor N/p\rfloor$\\
 turns of $\nu$ over $A$ & $A/\nu$\\
 arcs of $N$ on $p,p^2,\dots$ & Legendre's formula for $v_p(N!)$\\
 excess turns of $\nu$ over those of $z$ & $(A/\nu-A/z)^+$\\
+rings $\ell,\ell^2,\dots$ on which $a\ne b$ share a marker & $\ell^i$ with $i\le v_\ell(a-b)$\\
 \bottomrule
 \end{tabular}
 \end{center}
-The vocabulary is used where it carries a proved statement: Legendre's formula, the remainder
+The last row is a theorem (\lean{Structural.marker_eq_iff_le_padicValInt}): $\ell$-adic closeness
+of two numbers is the number of rings of $\ell$ on which their markers agree, wherever the numbers
+lie on the axis. The vocabulary is used where it carries a proved statement: Legendre's formula, the remainder
 (Section~\ref{sec:remainder}), the central binomial coefficient (Section~\ref{sec:certificate})
 and the level (Section~\ref{sec:lever}). Elsewhere the standard names are used.
 
@@ -516,7 +519,13 @@ certificate (\lean{Structural.erdos_multiplicity_one}): there the divisibility o
 $\binom{2n}{n}$ beyond the expected count is excluded for free, by carries in base $p$; here it is
 excluded only at a cost, by choosing the twist one prime at a time, so that the Selmer groups
 become short (New/Selmer/TwistTheorem) and the denominators follow (New/Selmer/DenominatorBound).
-The even classes, where Vandiver's conjecture lives, cost nothing there, which matches item 17 of
+A twist by a character of finite order rotates the contribution of each prime by a root of
+unity fixed by its residue modulo the conductor. For a root of unity of order prime to $\ell$, the
+marker on the first ring of $\ell$ fixes the markers on all rings $\ell^i$
+(\lean{Structural.frozen_offsets}: in $\mathbb Z/\ell^K$, $x^d=1$, $\ell\nmid d$ and $\ell\mid x-1$
+give $x=1$). So the offsets a twist sets are frozen on every ring of $\ell$, and the congruences
+between $\vartheta^j$ and $\vartheta^{j'}$ that the fit family must avoid are decided on the first
+ring. The even classes, where Vandiver's conjecture lives, cost nothing there, which matches item 17 of
 the timeline. The table of Section~\ref{sec:weights} agrees on the weight: this is the heaviest step that no other step
 needs.
 
@@ -643,7 +652,7 @@ Frobenius over $\mathbb F_q$ is a reading, not a theorem.
 grh-compact at the commit above builds in 36 minutes on the author's PC (Lean v4.35.0) and its five
 theorems print only \lean{propext}, \lean{Classical.choice}, \lean{Quot.sound}. The files
 \texttt{Structural/Arcs.lean}, \texttt{Certificate.lean}, \texttt{Lever.lean},
-\texttt{Spine.lean}, \texttt{Stepanov.lean}, \texttt{Exponent.lean} are added as a library on top of it without changing
+\texttt{Spine.lean}, \texttt{Stepanov.lean}, \texttt{Exponent.lean}, \texttt{RingsPadic.lean} are added as a library on top of it without changing
 it; all their theorems print the same three axioms. After \texttt{lake build}, the command
 \texttt{lake env lean scripts/Axioms.lean} prints the axioms of every theorem named in this note. The repository is a standalone Lake project that requires
 grh-compact at the commit above; \texttt{PNTPort/} holds the ported files of PrimeNumberTheoremAnd

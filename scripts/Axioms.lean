@@ -6,6 +6,7 @@ import Structural.Arcs
 import Structural.Certificate
 import Structural.Spine
 import Structural.Stepanov
+import Structural.RingsPadic
 import Structural.Exponent
 import Applications.RHLogDeriv
 import Applications.RHMellin
@@ -16,6 +17,8 @@ import Applications.StructuralWindow
 #print axioms Structural.lifts_sq_le
 #print axioms Structural.stepanov
 #print axioms Structural.erdos_multiplicity_one
+#print axioms Structural.marker_eq_iff_le_padicValInt
+#print axioms Structural.frozen_offsets
 #print axioms Structural.level_stepanov
 #print axioms Structural.auxiliary_size
 #print axioms Structural.few_translates
