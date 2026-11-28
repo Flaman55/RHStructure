@@ -221,3 +221,32 @@ zero-free region, not 2/3.
 Status: neither candidate yet reproduces "2/3 a priori". The remark gives no computation, and
 grh-compact contains only the final construction. The most direct source for the 2/3 is the
 author of the computation.
+## Step 7 (2026-11-28): what x^999 is made of, and P. Nelson's budget model
+
+Prompted by A. Flamandzki: x^999 looks like a forced value; extract what it is built from.
+
+- `HeightLe c y` (Heights/Heights) bounds a logarithmic height: α + Σ_l e_l ≤ c.
+- The x^999 of `IsFitFamily.height_le` comes from Selmer/FitTwistsExist (line 39):
+  Σ_{l∈T} 9·crudeUnit(l)·log l ≤ x^999, with crudeUnit(l) = v_l(chosenGroupOrder) + (1/2)^l
+  (Selmer/AptTupleDefs). The sum is at most 9·log(chosenGroupOrder) + O(1), and
+  log(chosenGroupOrder) ≤ 32 log x (Data/ChosenPlaceLevels; chosenGroupOrder = |∏_x GL_{rt}(𝔽_v)|
+  over the chosen places). So this part is O(log x): the exponent 999 is pure slack.
+- What the twist buys: the Selmer length at l is ≤ (10 f n + 1)·crudeUnit(l) (`SelmerLengthLe`),
+  i.e. tied to the l-part of a fixed group order on floor x. The dependence is on x-floor data only
+  (rank, degree, the chosen group), never on b or N.
+- Reading (not a theorem): without the twist, the natural bound on the l-divisibility of the
+  L-value ratios is their height, which grows with the weight (~ b) and the degree f: floor b,
+  not floor N. By `notes/floors.py` that alone keeps 1/2 for the pair terms, but the per-lift
+  denominator budget B₀ = f a (log b)³/(m k) divides by k ~ x^5, and a floor-b denominator per
+  lift would exceed it by far: the untwisted chain would give no saving at all, not 2/3.
+  If so, "2/3 a priori" is not "grh-compact minus the twists" but an earlier construction in the
+  development described in the remark.
+
+P. Nelson's workbook (rh-polymath reply, section "The budget x/m + m",
+https://ultronozm.github.io/grh-workbook/20261125T003000--the-chain-and-the-square-root__workbook.html#sec:budget):
+- step costs c_j = (2j−1)b give G(x) ≤ x/m + m, hence 1/2; c_j = (3j²−3j+1)b give x/m + m², hence
+  2/3: "The exponent is decided by how the total cost grows with the length of the chain."
+- Two independent square-root constraints: the level, 2mfb·log N ≤ f a L³, and the local defect,
+  C_loc f (m/k) b L ≤ U/(mk) ⟺ m ≤ L√(x/C_loc). The square root is set twice.
+- His "division": the cost of the ends is paid once and divided by m; charged per step, the chain
+  gives nothing (G ≤ x + 1).
